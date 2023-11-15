@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+  gym:
+    restart: always
+    build: ./
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - gym-django:/usr/src/app
+      - gym-static:/usr/src/app/project/static
+    env_file: .env
+    environment:
+      DEBUG: '1'
+      DB_HOST: "db"
+    depends_on:
+      - db
+    command: /usr/local/bin/gunicorn project.wsgi:application -w 2 -b :8000 && python manage.py migrate
+
+volumes:
+  gym-django:
+  gym-static:
+  postgres-data:
