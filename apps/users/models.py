@@ -18,3 +18,17 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'
+
+
+class UserProfile(BaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    weight = models.FloatField(blank=True, null=True)
+    height = models.FloatField(blank=True, null=True)
+    biceps = models.FloatField(blank=True, null=True)
+    triceps = models.FloatField(blank=True, null=True)
+    breasts = models.FloatField(blank=True, null=True)
+    guts = models.FloatField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
+    date_of_birth = models.DateField(blank=True, null=True)
+    user_type = models.CharField(max_length=10, choices=[('Trainer', 'Trainer'), ('Member', 'Member')])

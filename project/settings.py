@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     
     # local apps
     'apps.common',
-    'apps.users'
+    'apps.users',
+    'apps.gym',
 ]
 
 MIDDLEWARE = [
