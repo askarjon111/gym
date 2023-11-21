@@ -27,4 +27,6 @@ urlpatterns = [
 
     # admin
     path('admin/', admin.site.urls),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('users/', include('apps.users.urls')),
+    path('', include('apps.gym.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

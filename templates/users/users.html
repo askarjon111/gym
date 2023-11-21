@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} - Добавить нового клиента {% endblock title %}
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Все клиенты</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Главная</a></li>
+                    <li class="breadcrumb-item active">Все клиенты</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                </div>
+                <div class="card-body">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Имя Фамилия</th>
+                                <th>Номер телефона</th>
+                                <th>План</th>
+                                <th>Окончание подписки</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                <td>{{ user.phone_number }}</td>
+                                <td>{{ user.plan }}</td>
+                                <td>{{ user.subsription_end_date }}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="#">
+                                        <i class="fas fa-plus">
+                                        </i>
+                                    </a>
+                                    <a class="btn btn-info btn-sm" href="#">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>                                    </a>
+                                    <a class="btn btn-success btn-sm" href="#">
+                                        <i class="fas fa-check">
+                                        </i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Имя Фамилия</th>
+                                <th>Номер телефона</th>
+                                <th>План</th>
+                                <th>Окончание подписки</th>
+                                <th>Действие</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

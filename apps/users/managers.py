@@ -1,4 +1,6 @@
 from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.hashers import make_password
+
 
 class UserManager(BaseUserManager):
 
@@ -6,8 +8,7 @@ class UserManager(BaseUserManager):
         """Creates and saves a new user"""
         if not phone_number:
             raise ValueError("Users must have an phone_number address")
-        user = self.model(phone_number=phone_number, **extra_fields)
-        user.set_password(password)
+        user = self.model(phone_number=phone_number, **extra_fields, password=make_password(password))
         user.save(using=self._db)
 
         return user

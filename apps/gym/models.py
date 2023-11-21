@@ -10,6 +10,10 @@ class Plan(BaseModel):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     days = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+    
+
 
 class Subscription(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -17,5 +21,4 @@ class Subscription(BaseModel):
     status = models.CharField(max_length=15, choices=[('Active', 'Active'), ('Inactive', 'Inactive')])
     start_date = models.DateField()
     end_date = models.DateField()
-
 
