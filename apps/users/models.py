@@ -24,17 +24,18 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     @property
     def plan(self) -> None:
         from apps.gym.models import Subscription
-        subscription = Subscription.objects.filter(user=self).last()
+        subscription = Subscription.objects.filter(member=self).last()
         if subscription:
             return subscription.plan
 
     @property
     def subsription_end_date(self) -> None:
         from apps.gym.models import Subscription
-        subscription = Subscription.objects.filter(user=self).last()
+        subscription = Subscription.objects.filter(member=self).last()
         if subscription:
             return subscription.end_date
 
+    objects = UserManager()
 
 
 class UserProfile(BaseModel):

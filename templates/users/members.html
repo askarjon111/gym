@@ -22,7 +22,16 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                    <form method="get" class="form-inline ml-auto">
+                        <div class="input-group input-group-sm">
+                            <input name="q"  value="{{ request.GET.q }}" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="card-body">
                     <table id="example2" class="table table-bordered table-hover">
@@ -36,18 +45,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for member in members %}
                             <tr>
-                                <td>{{ user.first_name }} {{ user.last_name }}</td>
-                                <td>{{ user.phone_number }}</td>
-                                <td>{{ user.plan }}</td>
-                                <td>{{ user.subsription_end_date }}</td>
+                                <td>{{ member.first_name }} {{ member.last_name }}</td>
+                                <td>{{ member.phone_number }}</td>
+                                <td>{{ member.plan }}</td>
+                                <td>{{ member.subsription_end_date }}</td>
                                 <td>
                                     <a class="btn btn-primary btn-sm" href="#">
                                         <i class="fas fa-plus">
                                         </i>
                                     </a>
-                                    <a class="btn btn-info btn-sm" href="#">
+                                    <a class="btn btn-info btn-sm" href="{% url 'user-details' member.pk %}">
                                         <i class="fas fa-pencil-alt">
                                         </i>                                    </a>
                                     <a class="btn btn-success btn-sm" href="#">
@@ -70,6 +79,9 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div class="col-6">
+            {% include 'blocks/_pagination.html' %}
         </div>
     </div>
 </section>

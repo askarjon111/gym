@@ -2,6 +2,7 @@ Releases:
 1. Demo Release
     -- Admin add member
     -- Attandance table
+    -- Permissions/Auth
 
 --------------------------------
 Models:
