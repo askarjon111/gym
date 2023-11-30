@@ -1,4 +1,5 @@
-from datetime import datetime
+from django.utils import timezone
+
 from django.db import models
 
 from apps.common.models import BaseModel
@@ -28,8 +29,8 @@ class Subscription(BaseModel):
 
 
 class GymSession(BaseModel):
-    start = models.DateTimeField(default=datetime.now())
-    end = models.DateTimeField(default=datetime.now())
+    start = models.DateTimeField(default=timezone.now)
+    end = models.DateTimeField(default=timezone.now)
     member = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
@@ -37,8 +38,8 @@ class GymSession(BaseModel):
             Subscription.objects.get(
                 member=self.member,
                 status='Active',
-                start_date__lte=datetime.now().date(),
-                end_date__gte=datetime.now().date()
+                start_date__lte=timezone.now().date(),
+                end_date__gte=timezone.now().date()
             )
         except Subscription.DoesNotExist:
             raise ValueError("Member does not have a valid ongoing subscription plan.")

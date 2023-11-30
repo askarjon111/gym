@@ -1,9 +1,9 @@
-from datetime import datetime
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+from django.utils import timezone
 
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import DetailView, CreateView
 from django.db.models import Q
 
 from .models import User, UserProfile
@@ -39,7 +39,7 @@ class MembersListView(View):
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('q')
         members = User.objects.all().order_by('-id')
-        now = datetime.now()
+        now = timezone.now()
 
         if query:
             members = members.filter(
@@ -52,15 +52,12 @@ class MembersListView(View):
 
     def post(self, request, *args, **kwargs):
         form = AttendanceForm(request.POST)
-        now = datetime.now()
+        now = timezone.now()
         if form.is_valid():
             form.save(start=now)
             return redirect('users')
-        else:
-            print('-----------')
-            print(form.cleaned_data)
-            print(form.errors)
-        return render(request, self.template_name, {'members': UserProfile.objects.all(), 'form': form, 'now': now})
+
+        return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form, 'now': now})
 
 class UserDetail(DetailView):
     model = User
