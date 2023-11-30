@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.gym.models import Plan
+from apps.gym.models import GymSession, Plan
 from .models import User
 
 
@@ -22,3 +22,20 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'phone_number', 'plan')
+
+
+class AttendanceForm(forms.ModelForm):
+    class Meta:
+        model = GymSession
+        fields = ['member', 'start']
+
+    def __init__(self, *args, **kwargs):
+        super(AttendanceForm, self).__init__(*args, **kwargs)
+        self.fields['start'].widget = forms.HiddenInput()
+
+    def save(self, commit=True, **kwargs):
+        instance = super(AttendanceForm, self).save(commit=False)
+        instance.start = kwargs.get('start', None)
+        if commit:
+            instance.save()
+        return instance

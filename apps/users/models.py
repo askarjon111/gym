@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
 
@@ -34,6 +35,17 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         subscription = Subscription.objects.filter(member=self).last()
         if subscription:
             return subscription.end_date
+
+    @property
+    def fullname(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @property
+    def attended(self):
+        from apps.gym.models import GymSession
+        session = GymSession.objects.filter(member=self,
+                                            start__date__lte=datetime.now().date()).first()
+        return bool(session)
 
     objects = UserManager()
 

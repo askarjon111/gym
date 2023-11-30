@@ -12,12 +12,13 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Все клиенты</h1>
+                <h1>{{ user.fullname }}</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Главная</a></li>
-                    <li class="breadcrumb-item active">Все клиенты</li>
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+                    <li class="breadcrumb-item active"><a href="{% url 'users' %}">Все клиенты</a></li>
+                    <li class="breadcrumb-item active">{{ user.first_name }}</li>
                 </ol>
             </div>
         </div>
@@ -69,7 +70,7 @@
                             <!-- /btn-group -->
                             <div class="input-group">
                                 <input id="new-event" type="text" class="form-control" placeholder="Event Title">
-
+            
                                 <div class="input-group-append">
                                     <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
                                 </div>
@@ -91,7 +92,6 @@
                 </div>
                 <!-- /.card -->
             </div>
-            <!-- /.col -->
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->

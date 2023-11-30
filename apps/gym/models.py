@@ -46,5 +46,5 @@ class GymSession(BaseModel):
         super(GymSession, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.member
+        return f"{self.member}"
     
