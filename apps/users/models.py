@@ -30,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             return subscription.plan
 
     @property
-    def subsription_end_date(self) -> None:
+    def subscription_end_date(self) -> None:
         from apps.gym.models import Subscription
         subscription = Subscription.objects.filter(member=self).last()
         if subscription:
