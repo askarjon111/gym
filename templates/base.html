@@ -72,29 +72,39 @@
                             <p>Главная</p>
                         </a>
                     </li>
-                    <li class="nav-item has-treeview {% block open_members %}{% endblock %}">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-person"></i>
-                            <p>
-                                Клиенты
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
+                    <li class="nav-header">Клиенты</li>
+                    <li class="nav-item">
+                        <a href="{% url 'users' %}" class="nav-link {% block members %}{% endblock %}">
+                            <i class="fa-solid fa-person nav-icon"></i>
+                            <p>Все клиенты</p>
                         </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'users' %}" class="nav-link {% block members %}{% endblock %}">
-                                    <i class="far fa-person nav-icon"></i>
-                                    <p>Все клиенты</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'add-user' %}" class="nav-link {% block add_user %}{% endblock %}">
-                                    <i class="far fa-plus nav-icon"></i>
-                                    <p>Добавить нового</p>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
+                    <li class="nav-item">
+                        <a href="{% url 'add-user' %}" class="nav-link {% block add_user %}{% endblock %}">
+                            <i class="fa-solid fa-plus nav-icon"></i>
+                            <p>Добавить нового</p>
+                        </a>
+                    </li>
+                    <li class="nav-header">Зал</li>
+                    <li class="nav-item">
+                        <a href="{% url 'users' %}" class="nav-link {% block all_equipment %}{% endblock %}">
+                            <i class="fa-solid fa-dumbbell nav-icon"></i>
+                            <p>Оборудование</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'add-user' %}" class="nav-link {% block add_equipment %}{% endblock %}">
+                            <i class="fa-solid fa-money-bill nav-icon"></i>
+                            <p>Планы</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'add-user' %}" class="nav-link {% block coaches %}{% endblock %}">
+                            <i class="fa-solid fa-clipboard-user nav-icon"></i>
+                            <p>Персонал</p>
+                        </a>
+                    </li>
+                    </ul>
                 </nav>
             </div>
         </aside>

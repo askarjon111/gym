@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     def attended(self):
         from apps.gym.models import GymSession
         session = GymSession.objects.filter(member=self,
-                                            start__date__lte=datetime.now().date()).first()
+                                            start__date=datetime.now().date()).first()
         return bool(session)
 
     objects = UserManager()
