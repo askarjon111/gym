@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} - Добавить нового клиента {% endblock title %}
+{% block title %} - {{ user.fullname }} {% endblock title %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'assets/fullcalendar/main.min.css' %}">
 <link rel="stylesheet" href="{% static 'assets/fullcalendar-daygrid/main.min.css' %}">
@@ -17,7 +17,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                    <li class="breadcrumb-item active"><a href="{% url 'users' %}">Все клиенты</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'users' %}">Все клиенты</a></li>
                     <li class="breadcrumb-item active">{{ user.first_name }}</li>
                 </ol>
             </div>

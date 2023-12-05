@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} - Добавить нового клиента {% endblock title %}
+{% block title %} - Клиенты {% endblock title %}
 
 {% block members %}active{% endblock %}
 {% block open_members %}menu-open{% endblock %}
@@ -14,7 +14,7 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
                     <li class="breadcrumb-item active">Все клиенты</li>
                 </ol>
             </div>
@@ -53,8 +53,8 @@
                             <tr>
                                 <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'user-details' member.pk %}">{{ member.fullname }}</a></p></td>
                                 <td>{{ member.phone_number }}</td>
-                                <td>{{ member.plan }}</td>
-                                <td>{{ member.subscription_end_date }}</td>
+                                <td>{% if member.plan %}{{ member.plan }}{% else %}Нет{% endif %}</td>
+                                <td>{% if member.subscription_end_date %}{{ member.subscription_end_date }}{% else %}Нет{% endif %}</td>
                                 <td>
                                     <a class="btn btn-primary btn-sm" href="#">
                                         <i class="fas fa-plus">

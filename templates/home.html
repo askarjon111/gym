@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} - Добавить нового клиента {% endblock title %}
+{% block title %} - Главная {% endblock title %}
 {% block home %} active {% endblock home %}
 {% block head %}
 {% endblock head %}
@@ -9,17 +9,16 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Панель администратора</h1>
+            <h1 class="m-0 text-dark">Добро пожаловать!</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Панель администратора /</li>
+              <li class="breadcrumb-item active">Главная /</li>
             </ol>
           </div>
         </div>
       </div>
     </div>
-
 
     <section class="content">
       <div class="container-fluid">
@@ -28,7 +27,6 @@
             <div class="small-box bg-info">
               <div class="inner">
                 <h3>{{ users }}</h3>
-
                 <p>Все пользователи</p>
               </div>
               <div class="icon">
@@ -54,7 +52,6 @@
             <div class="small-box bg-warning">
               <div class="inner">
                 <h3>{{ new_members }}</h3>
-
                 <p>Новые пользователи</p>
               </div>
               <div class="icon">
@@ -66,9 +63,8 @@
           <div class="col-lg-3 col-6">
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>700000</h3>
-
-                <p>Доход</p>
+                <h3>1</h3>
+                <p>Посещал сегодня</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
