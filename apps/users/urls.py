@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.users.views import CreateUser, MarkAttendanceView, MembersListView, UserDetail
+from apps.users.views import CreateUser, MarkAttendanceView, MembersListView, UserDetail, login_view
 
 
 urlpatterns = [
@@ -7,5 +7,6 @@ urlpatterns = [
     path('add-user', CreateUser.as_view(), name="add-user"),
     path('<int:pk>', UserDetail.as_view(), name="user-details"),
     path('mark-attendance/', MarkAttendanceView.as_view(), name='mark-attendance'),
+    path('login/', login_view, name='login'),
 ]
 

@@ -1,15 +1,19 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.utils import timezone
-
+from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, CreateView
 from django.db.models import Q
 
-from .models import User, UserProfile
-from .forms import AttendanceForm, UserProfileForm
+from apps.users.models import User
+from apps.users.forms import AttendanceForm, UserProfileForm
 
 
+@login_required(login_url = 'login')
 def create_user(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST)
@@ -22,19 +26,21 @@ def create_user(request):
     return render(request, 'users/add_user.html', {'form': form})
 
 
-class CreateUser(CreateView):
+class CreateUser(LoginRequiredMixin, CreateView):
     model = User
     form_class = UserProfileForm
     template_name = 'users/add_user.html'
+    login_url = 'login'
 
     def get_success_url(self):
         return reverse('users')
 
 
-class MembersListView(View):
+class MembersListView(LoginRequiredMixin, View):
     template_name = 'users/members.html'
     context_object_name = 'members'
     paginate_by = 5
+    login_url = 'login'
 
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('q')
@@ -59,12 +65,14 @@ class MembersListView(View):
 
         return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form, 'now': now})
 
-class UserDetail(DetailView):
+class UserDetail(LoginRequiredMixin, DetailView):
+    login_url = 'login'
     model = User
     template_name = 'users/member.html'
 
 
 class MarkAttendanceView(View):
+    login_url = 'login'
     template_name = 'users/mark_attendance.html'
 
     def get(self, request, *args, **kwargs):
@@ -77,3 +85,18 @@ class MarkAttendanceView(View):
             form.save()
             return redirect('mark-attendance')
         return render(request, self.template_name, {'form': form})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('home')
+        else:
+            print(form.errors)
+    else:
+        form = AuthenticationForm()
+
+
+    return render(request, 'users/login.html', {'form': form})

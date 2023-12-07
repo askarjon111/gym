@@ -1,13 +1,17 @@
 from datetime import timedelta
 from django.shortcuts import render
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.views import View
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from apps.gym.models import GymSession, Subscription
+
+from apps.gym.models import GymSession, Plan, Subscription
 from apps.users.models import User
 
 
+@login_required(login_url = 'login')
 def home(request):
     users = User.objects.all()
     active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now())
@@ -17,6 +21,8 @@ def home(request):
                                                  "active_members": len(active_members),
                                                  "new_members": new_members})
 
+
+@login_required(login_url = 'login')
 @api_view(['POST'])
 def create_session_view(request):
     member_id = request.POST.get('member_id')
@@ -26,3 +32,12 @@ def create_session_view(request):
 
 
     return Response({"status": "ok"})
+
+
+class PlansView(View):
+    template_name = 'gym/plans.html'
+
+    def get(self, request):
+        plans = Plan.objects.all()
+        return render(request, self.template_name, {'plans': plans})
+

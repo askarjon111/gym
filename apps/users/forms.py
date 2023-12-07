@@ -1,8 +1,11 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
 from apps.gym.models import GymSession, Plan
 from .models import User
 
+class CustomAuthenticationForm(AuthenticationForm):
+    pass
 
 class UserProfileForm(forms.ModelForm):
     phone_number = forms.CharField(max_length=20,
