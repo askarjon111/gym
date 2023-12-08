@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.utils import timezone
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, CreateView
@@ -100,3 +100,11 @@ def login_view(request):
 
 
     return render(request, 'users/login.html', {'form': form})
+
+
+class LogOutView(LoginRequiredMixin, View):
+    login_url = 'login'
+
+    def get(self, request):
+        logout(request)
+        return redirect(self.login_url)

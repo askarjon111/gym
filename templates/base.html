@@ -66,45 +66,54 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
-                    <li class="nav-header">Меню</li>
-                    <li class="nav-item">
-                        <a href="{% url 'home' %}" class="nav-link {% block home %}{% endblock %}">
-                            <i class="fas fa-home nav-icon"></i>
-                            <p>Главная</p>
-                        </a>
-                    </li>
-                    <li class="nav-header">Клиенты</li>
-                    <li class="nav-item">
-                        <a href="{% url 'users' %}" class="nav-link {% block members %}{% endblock %}">
-                            <i class="fa-solid fa-person nav-icon"></i>
-                            <p>Все клиенты</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'add-user' %}" class="nav-link {% block add_user %}{% endblock %}">
-                            <i class="fa-solid fa-plus nav-icon"></i>
-                            <p>Добавить нового</p>
-                        </a>
-                    </li>
-                    <li class="nav-header">Зал</li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link {% block all_equipment %}{% endblock %}">
-                            <i class="fa-solid fa-dumbbell nav-icon"></i>
-                            <p>Оборудование</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'plans' %}" class="nav-link {% block plans %}{% endblock %}">
-                            <i class="fa-solid fa-money-bill nav-icon"></i>
-                            <p>Планы</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link {% block coaches %}{% endblock %}">
-                            <i class="fa-solid fa-clipboard-user nav-icon"></i>
-                            <p>Персонал</p>
-                        </a>
-                    </li>
+                        <li class="nav-header">Меню</li>
+                        <li class="nav-item">
+                            <a href="{% url 'home' %}" class="nav-link {% block home %}{% endblock %}">
+                                <i class="fas fa-home nav-icon"></i>
+                                <p>Главная</p>
+                            </a>
+                        </li>
+                        <li class="nav-header">Клиенты</li>
+                        <li class="nav-item">
+                            <a href="{% url 'users' %}" class="nav-link {% block members %}{% endblock %}">
+                                <i class="fa-solid fa-person nav-icon"></i>
+                                <p>Все клиенты</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'add-user' %}" class="nav-link {% block add_user %}{% endblock %}">
+                                <i class="fa-solid fa-plus nav-icon"></i>
+                                <p>Добавить нового</p>
+                            </a>
+                        </li>
+                        <li class="nav-header">Зал</li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link {% block all_equipment %}{% endblock %}">
+                                <i class="fa-solid fa-dumbbell nav-icon"></i>
+                                <p>Оборудование</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'plans' %}" class="nav-link {% block plans %}{% endblock %}">
+                                <i class="fa-solid fa-money-bill nav-icon"></i>
+                                <p>Планы</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link {% block coaches %}{% endblock %}">
+                                <i class="fa-solid fa-clipboard-user nav-icon"></i>
+                                <p>Персонал</p>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav nav-sidebar align-items-end ml-auto" role="menu" data-accordion="false">
+                        <li class="nav-item" style="position:absolute; bottom:0; right:10%;">
+                            <a href="{% url 'users' %}" class="nav-link">
+                                <i class="fa-solid fa-person nav-icon"></i>
+                                <p>Выйти</p>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -116,7 +125,7 @@
         {% block footer %}
         <footer class="main-footer">
             <strong><a class="link-offset-2 link-underline link-underline-opacity-0"
-                href="http://gymbro.uz">Gymbro.uz</a> 2023.</strong> Все права защищены.
+                href="http://gymbro.uz">Gymbro.uz</a>. </strong>
         </footer>
         {% endblock footer %}
     </div>

@@ -53,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 class UserProfile(BaseModel):
     """Profile model for user it saves users additional information"""
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     weight = models.FloatField(blank=True, null=True)
     height = models.FloatField(blank=True, null=True)
     biceps = models.FloatField(blank=True, null=True)
