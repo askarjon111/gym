@@ -17,9 +17,13 @@ class Plan(BaseModel):
 
 
 class Subscription(BaseModel):
+    STATUS_CHOICES=(
+        ('ACTIVE', 'Active'),
+        ('INACTIVE', 'Inactive'),
+    )
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    status = models.CharField(max_length=15, choices=[('Active', 'Active'), ('Inactive', 'Inactive')])
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES)
     start_date = models.DateField()
     end_date = models.DateField()
 
@@ -37,7 +41,7 @@ class GymSession(BaseModel):
         try:
             Subscription.objects.get(
                 member=self.member,
-                status='Active',
+                status=Subscription.STATUS_CHOICES[0][0],
                 start_date__lte=timezone.now().date(),
                 end_date__gte=timezone.now().date()
             )

@@ -10,20 +10,8 @@ from django.views.generic import DetailView, CreateView
 from django.db.models import Q
 
 from apps.users.models import User
+from apps.gym.models import Plan, Subscription
 from apps.users.forms import AttendanceForm, UserProfileForm
-
-
-@login_required(login_url = 'login')
-def create_user(request):
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('success_page')
-    else:
-        form = UserProfileForm()
-
-    return render(request, 'users/add_user.html', {'form': form})
 
 
 class CreateUser(LoginRequiredMixin, CreateView):
@@ -32,8 +20,22 @@ class CreateUser(LoginRequiredMixin, CreateView):
     template_name = 'users/add_user.html'
     login_url = 'login'
 
-    def get_success_url(self):
-        return reverse('users')
+
+    def post(self, request):
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = User.objects.get(phone_number=form.data['phone_number'])
+            plan = Plan.objects.get(id=form.data['plan'])
+            subs = Subscription.objects.create(member=user,
+                                               plan=plan,
+                                               start_date=form.data['start_date'],
+                                               end_date=form.data['end_date'],
+                                               status=Subscription.STATUS_CHOICES[0][0])
+            print(subs)
+        else:
+            print(form.errors)
+        return redirect('users')
 
 
 class MembersListView(LoginRequiredMixin, View):
