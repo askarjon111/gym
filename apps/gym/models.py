@@ -10,7 +10,7 @@ class Plan(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    days = models.IntegerField()
+    sessions = models.SmallIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -18,8 +18,8 @@ class Plan(BaseModel):
 
 class Subscription(BaseModel):
     STATUS_CHOICES=(
-        ('ACTIVE', 'Active'),
-        ('INACTIVE', 'Inactive'),
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
     )
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)

@@ -47,11 +47,24 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
                                             start__date=datetime.now().date()).first()
         return bool(session)
 
+    @property
+    def left_sessions(self):
+        if self.plan:
+            all_sessions = self.plan.sessions
+            attended_sessions = self.gymsession_set.count()
+            left = all_sessions - attended_sessions
+            return left
+
     objects = UserManager()
 
 
 class UserProfile(BaseModel):
     """Profile model for user it saves users additional information"""
+
+    GENDER_CHOICES= (
+        ('male', 'Мужской'),
+        ('female', 'Женский'),
+    )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     weight = models.FloatField(blank=True, null=True)
@@ -61,7 +74,7 @@ class UserProfile(BaseModel):
     chest = models.FloatField(blank=True, null=True)
     guts = models.FloatField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     date_of_birth = models.DateField(blank=True, null=True)
     user_type = models.CharField(max_length=10, choices=[('Trainer', 'Trainer'), ('Member', 'Member')])
 

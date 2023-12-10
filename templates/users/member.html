@@ -1,279 +1,170 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} - {{ user.fullname }} {% endblock title %}
-{% block style %}
-<link rel="stylesheet" href="{% static 'assets/fullcalendar/main.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/fullcalendar-daygrid/main.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/fullcalendar-timegrid/main.min.css' %}">
-<link rel="stylesheet" href="{% static 'assets/fullcalendar-bootstrap/main.min.css' %}">
-{% endblock style %}
+{% block members %}active{% endblock %}
 {% block content %}
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>{{ user.fullname }}</h1>
+                <h1>Профиль</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'users' %}">Все клиенты</a></li>
-                    <li class="breadcrumb-item active">{{ user.first_name }}</li>
+                    <li class="breadcrumb-item active">Профиль</li>
                 </ol>
             </div>
         </div>
-    </div>
+    </div><!-- /.container-fluid -->
 </section>
+
+<!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3">
-                <div class="sticky-top mb-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Draggable Events</h4>
+
+                <!-- Profile Image -->
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle"
+                                src="
+                                {% if user.profile.profile_picture %}
+                                {{ user.profile.profile_picture.url }}
+                                {% else %}
+                                {% static 'assets/img/default-user.jpg' %}
+                                {% endif %}"
+                                alt="User profile picture">
                         </div>
-                        <div class="card-body">
-                            <!-- the events -->
-                            <div id="external-events">
-                                <div class="external-event bg-success">Lunch</div>
-                                <div class="external-event bg-warning">Go home</div>
-                                <div class="external-event bg-info">Do homework</div>
-                                <div class="external-event bg-primary">Work on UI design</div>
-                                <div class="external-event bg-danger">Sleep tight</div>
-                                <div class="checkbox">
-                                    <label for="drop-remove">
-                                        <input type="checkbox" id="drop-remove">
-                                        remove after drop
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Create Event</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-                                <!--<button type="button" id="color-chooser-btn" class="btn btn-info btn-block dropdown-toggle" data-toggle="dropdown">Color <span class="caret"></span></button>-->
-                                <ul class="fc-color-picker" id="color-chooser">
-                                    <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                                    <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                                    <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                                    <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                                    <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                                </ul>
-                            </div>
-                            <!-- /btn-group -->
-                            <div class="input-group">
-                                <input id="new-event" type="text" class="form-control" placeholder="Event Title">
-            
-                                <div class="input-group-append">
-                                    <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
-                                </div>
-                                <!-- /btn-group -->
-                            </div>
-                            <!-- /input-group -->
+
+                        <h3 class="profile-username text-center">{{ user.fullname }}</h3>
+
+                        <p class="text-muted text-center">{{ user.plan }}</p>
+
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <b>Все сессии</b> <a class="float-right">{{ user.gymsession_set.count }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Телефон</b> <a class="float-right">{{ user.phone_number }}</a>
+                            </li>
+                            {% if user.profile %}
+                            <li class="list-group-item">
+                                <b>Пол</b> <a class="float-right">{{ user.profile.get_gender_display }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Дата рождения</b> <a class="float-right">{{ user.profile.date_of_birth }}</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        <div class="action-buttons text-center">
+                            <button href="#" class="btn btn-outline-success" title="Добавить подписку"
+                            data-toggle="modal" data-target="#modal-default"><i class="fa-solid fa-plus"></i></button>
+                            <a href="#" class="btn btn-outline-warning" title="Изменить пользователя"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="#" class="btn btn-outline-danger" title="Удалить подписку"><i class="fa-solid fa-user-minus"></i></a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- /.col -->
-            <div class="col-md-9">
+
                 <div class="card card-primary">
-                    <div class="card-body p-0">
-                        <!-- THE CALENDAR -->
-                        <div id="calendar"></div>
+                    <div class="info-box bg-{% if user.plan %}success{% else %}warning{% endif %}">
+                        <span class="info-box-icon"><i class="fa-regular fa-circle-check"></i></span>
+                
+                        <div class="info-box-content">
+                            <span class="info-box-number">{{ user.plan }}</span>
+                            <span class="info-box-text">До {{ user.subscription_end_date }}</span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 70%"></div>
+                            </div>
+                            <span class="progress-description">
+                                Осталось {{ user.left_sessions }} сеансов
+                            </span>
+                        </div>
                     </div>
-                    <!-- /.card-body -->
                 </div>
                 <!-- /.card -->
             </div>
+            <!-- /.col -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#activity"
+                                    data-toggle="tab">Активность</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">История подписок</a>
+                            </li>
+                        </ul>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="activity">
+                            </div>
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="timeline">
+                            </div>
+                            <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                    </div><!-- /.card-body -->
+                </div>
+                <!-- /.nav-tabs-custom -->
+            </div>
+            <!-- /.col -->
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
 </section>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить подписку</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'add-subscription' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="member" value="{{ user.id }}">
+                
+                <div class="form-group">
+                    <label for="id_member">Пользователь</label>
+                    <input type="text" id="id_member" value="{{ user.fullname }}" class="form-control" readonly>
+                </div>
+                
+                <!-- Other form fields -->
+                <div class="form-group">
+                    <label for="{{ add_subscription_form.plan.id_for_label }}">План</label>
+                    {{ add_subscription_form.plan }}
+                </div>
+                
+                <!-- Display the start_date field -->
+                <div class="form-group">
+                    <label for="{{ add_subscription_form.start_date.id_for_label }}">Дата начала</label>
+                    {{ add_subscription_form.start_date }}
+                </div>
+                
+                <!-- Display the end_date field -->
+                <div class="form-group">
+                    <label for="{{ add_subscription_form.end_date.id_for_label }}">Дата окончания</label>
+                    {{ add_subscription_form.end_date }}
+                </div>
+                
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 {% endblock content %}
 {% block script %}
-<!-- fullCalendar 2.2.5 -->
-<script src="{% static 'assets/moment/moment.min.js' %}"></script>
-<script src="{% static 'assets/fullcalendar/main.min.js' %}"></script>
-<script src="{% static 'assets/fullcalendar-daygrid/main.min.js' %}"></script>
-<script src="{% static 'assets/fullcalendar-timegrid/main.min.js' %}"></script>
-<script src="{% static 'assets/fullcalendar-interaction/main.min.js' %}"></script>
-<script src="{% static 'assets/fullcalendar-bootstrap/main.min.js' %}"></script>
-<!-- Page specific script -->
-<script>
-    $(function () {
-
-        /* initialize the external events
-         -----------------------------------------------------------------*/
-        function ini_events(ele) {
-            ele.each(function () {
-
-                // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
-                // it doesn't need to have a start or end
-                var eventObject = {
-                    title: $.trim($(this).text()) // use the element's text as the event title
-                }
-
-                // store the Event Object in the DOM element so we can get to it later
-                $(this).data('eventObject', eventObject)
-
-                // make the event draggable using jQuery UI
-                $(this).draggable({
-                    zIndex: 1070,
-                    revert: true, // will cause the event to go back to its
-                    revertDuration: 0  //  original position after the drag
-                })
-
-            })
-        }
-
-        ini_events($('#external-events div.external-event'))
-
-        /* initialize the calendar
-         -----------------------------------------------------------------*/
-        //Date for the calendar events (dummy data)
-        var date = new Date()
-        var d = date.getDate(),
-            m = date.getMonth(),
-            y = date.getFullYear()
-
-        var Calendar = FullCalendar.Calendar;
-        var Draggable = FullCalendarInteraction.Draggable;
-
-        var containerEl = document.getElementById('external-events');
-        var checkbox = document.getElementById('drop-remove');
-        var calendarEl = document.getElementById('calendar');
-
-        // initialize the external events
-        // -----------------------------------------------------------------
-
-        new Draggable(containerEl, {
-            itemSelector: '.external-event',
-            eventData: function (eventEl) {
-                console.log(eventEl);
-                return {
-                    title: eventEl.innerText,
-                    backgroundColor: window.getComputedStyle(eventEl, null).getPropertyValue('background-color'),
-                    borderColor: window.getComputedStyle(eventEl, null).getPropertyValue('background-color'),
-                    textColor: window.getComputedStyle(eventEl, null).getPropertyValue('color'),
-                };
-            }
-        });
-
-        var calendar = new Calendar(calendarEl, {
-            plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid'],
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            'themeSystem': 'bootstrap',
-            //Random default events
-            events: [
-                {
-                    title: 'All Day Event',
-                    start: new Date(y, m, 1),
-                    backgroundColor: '#f56954', //red
-                    borderColor: '#f56954', //red
-                    allDay: true
-                },
-                {
-                    title: 'Long Event',
-                    start: new Date(y, m, d - 5),
-                    end: new Date(y, m, d - 2),
-                    backgroundColor: '#f39c12', //yellow
-                    borderColor: '#f39c12' //yellow
-                },
-                {
-                    title: 'Meeting',
-                    start: new Date(y, m, d, 10, 30),
-                    allDay: false,
-                    backgroundColor: '#0073b7', //Blue
-                    borderColor: '#0073b7' //Blue
-                },
-                {
-                    title: 'Lunch',
-                    start: new Date(y, m, d, 12, 0),
-                    end: new Date(y, m, d, 14, 0),
-                    allDay: false,
-                    backgroundColor: '#00c0ef', //Info (aqua)
-                    borderColor: '#00c0ef' //Info (aqua)
-                },
-                {
-                    title: 'Birthday Party',
-                    start: new Date(y, m, d + 1, 19, 0),
-                    end: new Date(y, m, d + 1, 22, 30),
-                    allDay: false,
-                    backgroundColor: '#00a65a', //Success (green)
-                    borderColor: '#00a65a' //Success (green)
-                },
-                {
-                    title: 'Click for Google',
-                    start: new Date(y, m, 28),
-                    end: new Date(y, m, 29),
-                    url: 'http://google.com/',
-                    backgroundColor: '#3c8dbc', //Primary (light-blue)
-                    borderColor: '#3c8dbc' //Primary (light-blue)
-                }
-            ],
-            editable: true,
-            droppable: true, // this allows things to be dropped onto the calendar !!!
-            drop: function (info) {
-                // is the "remove after drop" checkbox checked?
-                if (checkbox.checked) {
-                    // if so, remove the element from the "Draggable Events" list
-                    info.draggedEl.parentNode.removeChild(info.draggedEl);
-                }
-            }
-        });
-
-        calendar.render();
-        // $('#calendar').fullCalendar()
-
-        /* ADDING EVENTS */
-        var currColor = '#3c8dbc' //Red by default
-        //Color chooser button
-        var colorChooser = $('#color-chooser-btn')
-        $('#color-chooser > li > a').click(function (e) {
-            e.preventDefault()
-            //Save color
-            currColor = $(this).css('color')
-            //Add color effect to button
-            $('#add-new-event').css({
-                'background-color': currColor,
-                'border-color': currColor
-            })
-        })
-        $('#add-new-event').click(function (e) {
-            e.preventDefault()
-            //Get value and make sure it is not null
-            var val = $('#new-event').val()
-            if (val.length == 0) {
-                return
-            }
-
-            //Create events
-            var event = $('<div />')
-            event.css({
-                'background-color': currColor,
-                'border-color': currColor,
-                'color': '#fff'
-            }).addClass('external-event')
-            event.html(val)
-            $('#external-events').prepend(event)
-
-            //Add draggable funtionality
-            ini_events(event)
-
-            //Remove event from text input
-            $('#new-event').val('')
-        })
-    })
-</script>
 {% endblock script %}

@@ -1,10 +1,11 @@
 from datetime import timedelta
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from apps.gym.forms import AddSubscriptionForm
 
 
 from apps.gym.models import GymSession, Plan, Subscription
@@ -41,3 +42,16 @@ class PlansView(View):
         plans = Plan.objects.all()
         return render(request, self.template_name, {'plans': plans})
 
+
+class AddSubscriptionView(View):
+    model = Subscription
+    template_name = 'users/member.html'
+
+    def post(self, request):
+        form = AddSubscriptionForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            print('error')
+            print(form.errors)
+        return redirect('user-details', form.data['member'])

@@ -1,4 +1,6 @@
+from typing import Any
 from django.contrib.auth.forms import AuthenticationForm
+from django.db import models
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -8,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, CreateView
 from django.db.models import Q
+from apps.gym.forms import AddSubscriptionForm
 
 from apps.users.models import User
 from apps.gym.models import Plan, Subscription
@@ -32,7 +35,6 @@ class CreateUser(LoginRequiredMixin, CreateView):
                                                start_date=form.data['start_date'],
                                                end_date=form.data['end_date'],
                                                status=Subscription.STATUS_CHOICES[0][0])
-            print(subs)
         else:
             print(form.errors)
         return redirect('users')
@@ -71,6 +73,14 @@ class UserDetail(LoginRequiredMixin, DetailView):
     login_url = 'login'
     model = User
     template_name = 'users/member.html'
+
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['add_subscription_form'] = AddSubscriptionForm()
+        return context
+    
 
 
 class MarkAttendanceView(View):

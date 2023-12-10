@@ -24,24 +24,26 @@
 <section class="content">
     <div class="row">
         <div class="col-md-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title">Персональная информация</h3>
+            <form method="post">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Персональная информация</h3>
 
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                            <i class="fas fa-minus"></i></button>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                            {% csrf_token %}
+                            {{ form.as_p }}
                     </div>
                 </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button class="btn btn-success float-right" type="submit">Добавить</button>
-                    </form>
-                </div>
-            </div>
+                <button class="btn btn-success float-right" type="submit">Добавить</button>
+                <br/>
+                <br/>
+            </form>
         </div>
     </div>
 </section>
