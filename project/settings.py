@@ -237,7 +237,3 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'users.User'
-
-USE_L10N = True
-
-DATE_FORMAT = 'j F Y'
