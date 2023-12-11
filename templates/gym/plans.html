@@ -57,7 +57,7 @@
                                 </td>
                                 <td>{% if plan.description %}{{ plan.description }}{% endif %}</td>
                                 <td>{{ plan.price|floatformat:"-2"|default:"0"|intcomma }} сўм</td>
-                                <td>{{ plan.days }}</td>
+                                <td>{{ plan.sessions }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
