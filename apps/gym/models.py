@@ -30,7 +30,6 @@ class Subscription(BaseModel):
 
     def __str__(self):
         return f"{self.plan}"
-    
 
 
 class GymSession(BaseModel):
@@ -55,4 +54,10 @@ class GymSession(BaseModel):
 
     def __str__(self):
         return f"{self.member}"
-    
+
+
+class QRCode(BaseModel):
+    code = models.CharField(max_length=100, unique=True)
+    image = models.ImageField(upload_to=f'qr_codes/')
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    is_printed = models.BooleanField(default=False)
