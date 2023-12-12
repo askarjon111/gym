@@ -143,34 +143,6 @@ CORS_ALLOW_HEADERS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-SWAGGER_SETTINGS = {
-    'LOGIN_URL': 'rest_framework:login',
-    'LOGOUT_URL': 'rest_framework:logout',
-    'USE_SESSION_AUTH': True,
-    'JSON_EDITOR': True,
-    'DOC_EXPANSION': 'list',
-    'APIS_SORTER': 'alpha',
-    'api_version': '1',
-    'SHOW_REQUEST_HEADERS': True,
-    'SECURITY_DEFINITIONS': {
-            'Bearer': {
-                'type': 'apiKey',
-                'name': 'Authorization',
-                'in': 'header',
-            },
-            'basic': {
-                'type': 'basic'
-            }
-        },
-    'SUPPORTED_SUBMIT_METHODS': [
-            'get',
-            'post',
-            'put',
-            'patch'
-            'delete',
-        ],
-}
-
 auth_list = [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -204,7 +176,7 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": os.environ.get('SECRET_KEY'),
+    "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,
