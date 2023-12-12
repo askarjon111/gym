@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.utils import timezone
 
 from django.db import models
@@ -18,12 +19,12 @@ class Plan(BaseModel):
 
 class Subscription(BaseModel):
     STATUS_CHOICES=(
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
+        ('active', 'Активный'),
+        ('inactive', 'Неактивный'),
     )
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
     start_date = models.DateField()
     end_date = models.DateField()
 
@@ -36,15 +37,17 @@ class GymSession(BaseModel):
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
     member = models.ForeignKey(User, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         try:
-            Subscription.objects.get(
+            subscription = Subscription.objects.get(
                 member=self.member,
                 status=Subscription.STATUS_CHOICES[0][0],
                 start_date__lte=timezone.now().date(),
                 end_date__gte=timezone.now().date()
             )
+            self.subscription = subscription
         except Subscription.DoesNotExist:
             raise ValueError("Member does not have a valid ongoing subscription plan.")
 

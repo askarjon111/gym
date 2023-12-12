@@ -1,6 +1,6 @@
 from typing import Any
 from django.contrib.auth.forms import AuthenticationForm
-from django.db import models
+from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -58,10 +58,13 @@ class MembersListView(LoginRequiredMixin, View):
                 Q(last_name__icontains=query)
             )
         form = AttendanceForm()
-        return render(request, self.template_name, {'members': members, 'form': form, 'now': now})
+        return render(request, self.template_name, {'members': members,
+                                                    'form': form,
+                                                    'now': now,
+                                                    'add_subscription_form': AddSubscriptionForm()})
 
     def post(self, request, *args, **kwargs):
-        form = AttendanceForm(request.POST)
+        form = AttendanceForm(request.POST, request=request)
         now = timezone.now()
         if form.is_valid():
             form.save(start=now)
@@ -88,14 +91,18 @@ class MarkAttendanceView(View):
     template_name = 'users/mark_attendance.html'
 
     def get(self, request, *args, **kwargs):
-        form = AttendanceForm()
+        print('request')
+        form = AttendanceForm(request.POST, request=request)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = AttendanceForm(request.POST)
+        print('request')
+        form = AttendanceForm(request.POST, request=request)
+        
         if form.is_valid():
             form.save()
             return redirect('mark-attendance')
+        
         return render(request, self.template_name, {'form': form})
 
 

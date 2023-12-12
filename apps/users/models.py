@@ -12,7 +12,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone_number = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     # objects = UserManager()
@@ -30,11 +29,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             return subscription.plan
 
     @property
-    def subscription_end_date(self) -> None:
+    def subscription(self):
         from apps.gym.models import Subscription
         subscription = Subscription.objects.filter(member=self).last()
         if subscription:
-            return subscription.end_date
+            return subscription
 
     @property
     def fullname(self):
@@ -49,9 +48,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     @property
     def left_sessions(self):
+        from apps.gym.models import GymSession
         if self.plan:
+            from apps.gym.models import Subscription
             all_sessions = self.plan.sessions
-            attended_sessions = self.gymsession_set.count()
+            subscription = Subscription.objects.filter(member=self).last()
+            attended_sessions = GymSession.objects.filter(member=self, subscription=subscription).count()
             left = all_sessions - attended_sessions
             return left
 

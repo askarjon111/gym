@@ -1,5 +1,7 @@
 from datetime import date, timedelta
 from django import forms
+from django.shortcuts import redirect
+from django.contrib import messages
 
 from apps.gym.models import GymSession, Plan
 from .models import User
@@ -41,12 +43,19 @@ class AttendanceForm(forms.ModelForm):
         fields = ['member', 'start']
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(AttendanceForm, self).__init__(*args, **kwargs)
         self.fields['start'].widget = forms.HiddenInput()
 
     def save(self, commit=True, **kwargs):
         instance = super(AttendanceForm, self).save(commit=False)
         instance.start = kwargs.get('start', None)
-        if commit:
-            instance.save()
+        try:
+            if commit:
+                instance.save()
+        except ValueError:
+            messages.add_message(request=self.request,
+                                 level=messages.ERROR,
+                                 message="У участника нет действующего действующего плана подписки.")
+            return redirect('users')
         return instance
