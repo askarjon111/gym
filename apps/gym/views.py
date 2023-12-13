@@ -15,7 +15,9 @@ from apps.users.models import User
 @login_required(login_url = 'login')
 def home(request):
     users = User.objects.all()
-    active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now())
+    active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now(),
+                                                       status=Subscription.STATUS_CHOICES[0][0])
+    print(active_subscriptions)
     active_members = [subscription.member for subscription in active_subscriptions]
     new_members = users.filter(created_at__gte=timezone.now() - timedelta(days=7)).count()
     return render(request, 'home.html', context={"users": users.count(),

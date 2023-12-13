@@ -28,6 +28,13 @@ class Subscription(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
+    def save(self, *args, **kwargs):
+        active_subscriptions = self.member.subscription_set.filter(status=self.STATUS_CHOICES[0][0])
+        if active_subscriptions.count():
+            active_subscriptions.update(status=self.STATUS_CHOICES[1][0])
+
+        super(Subscription, self).save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.plan}"
 

@@ -31,7 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     @property
     def subscription(self):
         from apps.gym.models import Subscription
-        subscription = Subscription.objects.filter(member=self).last()
+        subscription = Subscription.objects.filter(member=self, status=Subscription.STATUS_CHOICES[0][0]).last()
         if subscription:
             return subscription
 
