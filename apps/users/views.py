@@ -13,7 +13,7 @@ from django.db.models import Q
 from apps.gym.forms import AddSubscriptionForm
 
 from apps.users.models import User
-from apps.gym.models import Plan, Subscription
+from apps.gym.models import GymSession, Plan, Subscription
 from apps.users.forms import AttendanceForm, UserProfileForm
 
 
@@ -65,12 +65,11 @@ class MembersListView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         form = AttendanceForm(request.POST, request=request)
-        now = timezone.now()
         if form.is_valid():
-            form.save(start=now)
+            form.save(start=timezone.now())
             return redirect('users')
 
-        return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form, 'now': now})
+        return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form})
 
 class UserDetail(LoginRequiredMixin, DetailView):
     login_url = 'login'
@@ -80,30 +79,12 @@ class UserDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        if kwargs['object'].subscription:
+            context['attended_sessions'] = GymSession.objects.filter(member=kwargs['object'], subscription=kwargs['object'].subscription)
+            context['list'] = kwargs['object'].plan.sessions - context['attended_sessions'].count()
         context['add_subscription_form'] = AddSubscriptionForm()
+        context['now'] = timezone.now()
         return context
-    
-
-
-class MarkAttendanceView(View):
-    login_url = 'login'
-    template_name = 'users/mark_attendance.html'
-
-    def get(self, request, *args, **kwargs):
-        print('request')
-        form = AttendanceForm(request.POST, request=request)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        print('request')
-        form = AttendanceForm(request.POST, request=request)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('mark-attendance')
-        
-        return render(request, self.template_name, {'form': form})
 
 
 def login_view(request):

@@ -40,9 +40,17 @@
                                 alt="User profile picture">
                         </div>
 
-                        <h3 class="profile-username text-center">{{ user.fullname }}</h3>
-
-                        <p class="text-muted text-center">{{ user.plan }}</p>
+                        <h3 class="profile-username text-center">{{ user.fullname }}
+                            <form class="btn btn-sm" method="post" action="{% url 'users' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="member" value="{{ user.id }}">
+                                <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">
+                                <button title="Пришел" class="btn btn-success btn-sm {% if user.attended %} disabled {% endif %}" type="submit">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </h3>
+                        <p class="text-muted text-center">{% if user.plan %}{{ user.plan }}{% endif %}</p>
 
                         <ul class="list-group list-group-unbordered mb-3">
                             <li class="list-group-item">
@@ -61,10 +69,12 @@
                             {% endif %}
                         </ul>
                         <div class="action-buttons text-center">
-                            <button href="#" class="btn btn-outline-success" title="Добавить подписку"
+                            <button href="#" class="btn btn-outline-primary" title="Добавить подписку"
                             data-toggle="modal" data-target="#modal-default"><i class="fa-solid fa-plus"></i></button>
-                            <a href="#" class="btn btn-outline-warning" title="Изменить пользователя"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <a href="#" class="btn btn-outline-danger" title="Удалить подписку"><i class="fa-solid fa-user-minus"></i></a>
+                            <button href="#" class="btn btn-outline-warning" title="Изменить пользователя" data-toggle="modal"
+                                data-target="#modal-default"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button href="#" class="btn btn-outline-danger" title="Удалить подписку" data-toggle="modal"
+                                data-target="#modal-default"><i class="fa-solid fa-user-minus"></i></button>
                         </div>
                     </div>
                 </div>
@@ -101,6 +111,18 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="activity">
+                                {% if object.subscription %}
+                                    {% for session in attended_sessions %}
+                                        <button class="attendance-button-active">
+                                        </button>
+                                    {% endfor %}
+                                
+                                    {% for session in " "|rjust:list %}
+                                        <button class="attendance-button-disabled"></button>
+                                    {% endfor %}
+                                {% else %}
+                                <h4 class="text-center">У пользователя нет абонемента</h4>
+                                {% endif %}
                             </div>
                             <!-- /.tab-pane -->
                             <div class="tab-pane" id="timeline">

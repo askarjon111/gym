@@ -17,7 +17,6 @@ def home(request):
     users = User.objects.all()
     active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now(),
                                                        status=Subscription.STATUS_CHOICES[0][0])
-    print(active_subscriptions)
     active_members = [subscription.member for subscription in active_subscriptions]
     new_members = users.filter(created_at__gte=timezone.now() - timedelta(days=7)).count()
     return render(request, 'home.html', context={"users": users.count(),
@@ -54,6 +53,5 @@ class AddSubscriptionView(View):
         if form.is_valid():
             form.save()
         else:
-            print('error')
             print(form.errors)
         return redirect('user-details', form.data['member'])
