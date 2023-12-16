@@ -35,6 +35,11 @@ class Subscription(BaseModel):
 
         super(Subscription, self).save(*args, **kwargs)
 
+    def attendance_percentage(self):
+        total_days = self.plan.sessions
+        attended_days = self.gymsession_set.count()
+        return round((attended_days / total_days) * 100 if total_days > 0 else 0)
+
     def __str__(self):
         return f"{self.plan}"
 
