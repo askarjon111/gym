@@ -50,8 +50,6 @@
                                 </button>
                             </form>
                         </h3>
-                        <p class="text-muted text-center">{% if user.plan %}{{ user.plan }}{% endif %}</p>
-
                         <ul class="list-group list-group-unbordered mb-3">
                             <li class="list-group-item">
                                 <b>Все сессии</b> <a class="float-right">{{ user.gymsession_set.count }}</a>
@@ -80,14 +78,14 @@
                 </div>
 
                 <div class="card-primary">
-                    <div class="info-box bg-{% if user.plan %}success{% else %}warning{% endif %}">
+                    <div class="info-box bg-{% if user.subscription %}success{% else %}warning{% endif %}">
                         <span class="info-box-icon"><i class="fa-regular fa-circle-check"></i></span>
                 
                         <div class="info-box-content">
                             <span class="info-box-number">{{ user.plan }}</span>
-                            <span class="info-box-text">До {{ user.subscription.end_date }}</span>
+                            <span class="info-box-text">До {% if user.subscription %}{{ user.subscription.end_date }}{% else %}--{% endif %}</span>
                             <div class="progress">
-                                <div class="progress-bar" style="width: 70%"></div>
+                                <div class="progress-bar" style="width: {{ user.subscription.attendance_percentage }}%"></div>
                             </div>
                             <span class="progress-description">
                                 Осталось {{ user.left_sessions }} сеансов
@@ -95,6 +93,10 @@
                         </div>
                     </div>
                 </div>
+                <form action="" method="post">{% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Save">
+                </form>
                 <!-- /.card -->
             </div>
             <!-- /.col -->
@@ -102,9 +104,10 @@
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#activity"
-                                    data-toggle="tab">Активность</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Активность</a></li>
                             <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">История подписок</a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="#edit" data-toggle="tab">Редактировать</a>
                             </li>
                         </ul>
                     </div><!-- /.card-header -->
@@ -116,15 +119,15 @@
                                         <button class="attendance-button-active">
                                         </button>
                                     {% endfor %}
-                                
-                                    {% for session in " "|rjust:list %}
-                                        <button class="attendance-button-disabled"></button>
-                                    {% endfor %}
+                                    {% if list %}
+                                        {% for session in " "|rjust:list %}
+                                            <button class="attendance-button-disabled"></button>
+                                        {% endfor %}
+                                    {% endif %}
                                 {% else %}
                                 <h4 class="text-center">У пользователя нет абонемента</h4>
                                 {% endif %}
                             </div>
-                            <!-- /.tab-pane -->
                             <div class="tab-pane" id="timeline">
                                     <div class="card-body p-0">
                                         <table class="table table-sm">
@@ -160,7 +163,21 @@
                                     </div>
                                     <!-- /.card-body -->
                             </div>
-                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="edit">
+                                <form action="user-update" class="row g-3" method="post" enctype="multipart/form-data">
+                                    <!-- {% csrf_token %}
+                                    {% for field in form %}
+                                    <div class="col-lg-6">
+                                        {{ field.label }}
+                                        {{ field }}
+                                        {{ field.error }}
+                                    </div>
+                                    {% endfor %}
+                                    <div class="col-12 d-flex justify-content-end">
+                                        <button class="btn btn-primary" type="submit">Saqlash</button>
+                                    </div> -->
+                                </form>
+                            </div>
                         </div>
                         <!-- /.tab-content -->
                     </div><!-- /.card-body -->

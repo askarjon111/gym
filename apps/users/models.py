@@ -27,6 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         subscription = Subscription.objects.filter(member=self).last()
         if subscription:
             return subscription.plan
+        return ""
 
     @property
     def subscription(self):
@@ -56,6 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             attended_sessions = GymSession.objects.filter(member=self, subscription=subscription).count()
             left = all_sessions - attended_sessions
             return left
+        return 0
 
     objects = UserManager()
 

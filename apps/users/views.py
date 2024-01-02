@@ -8,24 +8,24 @@ from django.utils import timezone
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, FormView
 from django.db.models import Q
 from apps.gym.forms import AddSubscriptionForm
 
 from apps.users.models import User
 from apps.gym.models import GymSession, Plan, Subscription
-from apps.users.forms import AttendanceForm, UserProfileForm
+from apps.users.forms import AttendanceForm, UserCreateForm, UserUpdateForm
 
 
 class CreateUser(LoginRequiredMixin, CreateView):
     model = User
-    form_class = UserProfileForm
+    form_class = UserCreateForm
     template_name = 'users/add_user.html'
     login_url = 'login'
 
 
     def post(self, request):
-        form = UserProfileForm(request.POST)
+        form = UserCreateForm(request.POST)
         if form.is_valid():
             form.save()
             user = User.objects.get(phone_number=form.data['phone_number'])
@@ -71,6 +71,7 @@ class MembersListView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form})
 
+
 class UserDetail(LoginRequiredMixin, DetailView):
     login_url = 'login'
     model = User
@@ -82,9 +83,41 @@ class UserDetail(LoginRequiredMixin, DetailView):
         if kwargs['object'].subscription:
             context['attended_sessions'] = GymSession.objects.filter(member=kwargs['object'], subscription=kwargs['object'].subscription)
             context['list'] = kwargs['object'].plan.sessions - context['attended_sessions'].count()
+            context['list'] = 0 if context['list'] < 0 else context['list']
         context['add_subscription_form'] = AddSubscriptionForm()
         context['now'] = timezone.now()
         return context
+
+
+class UserUpdateView(LoginRequiredMixin, FormView):
+    login_url = 'login'
+    template_name = 'users/member.html'
+    form_class = UserUpdateForm
+
+    def get_initial(self):
+        return {
+            'first_name': self.request.user.first_name,
+            'last_name': self.request.user.last_name,
+            'region': self.request.user.region,
+            'city': self.request.user.city,
+            'location': self.request.user.location,
+            'description': self.request.user.description,
+            'telegram_id': self.request.user.telegram_id,
+        }
+
+    def form_valid(self, form):
+        user = User.objects.get(pk=form.cleaned_data['user_id'])
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.phone_number = form.cleaned_data['phone_number']
+        try:
+            user.save()
+            return redirect('home')
+        except Exception as e:
+            print(f"{e}")
+            messages.add_message(self.request, messages.WARNING,
+                                 "Xato")
+            return redirect('user-details', form.cleaned_data['user_id'])
 
 
 def login_view(request):

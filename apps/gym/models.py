@@ -58,9 +58,13 @@ class GymSession(BaseModel):
                 start_date__lte=timezone.now().date(),
                 end_date__gte=timezone.now().date()
             )
-            self.subscription = subscription
+            self.subscription = subscription            
         except Subscription.DoesNotExist:
             raise ValueError("Member does not have a valid ongoing subscription plan.")
+
+        if self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
+            self.subscription.status = Subscription.STATUS_CHOICES[1][0]
+            self.subscription.save()
 
         super(GymSession, self).save(*args, **kwargs)
 

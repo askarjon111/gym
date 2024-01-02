@@ -56,11 +56,10 @@
                             <tr>
                                 <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'user-details' member.pk %}">{{ member.fullname }}</a></p></td>
                                 <td>{{ member.phone_number }}</td>
-                                <td>{% if member.plan %}{{ member.plan }}{% else %}Нет{% endif %}</td>
+                                <td>{% if member.subscription %}{{ member.plan }}{% else %}Нет{% endif %}</td>
                                 <td>{% if member.subscription.end_date %}{{ member.subscription.end_date }}{% else %}Нет{% endif %}</td>
                                 <td>{% if member.subscription %}{{ member.subscription.get_status_display }}{% else %}Нет{% endif %}</td>
                                 <td>
-                                    
                                     <button href="#" class="btn btn-primary btn-sm" title="Добавить подписку" data-toggle="modal"
                                             data-target="#modal-default-{{ member.id }}"><i class="fas fa-plus"></i></button>
                                     <form class="btn btn-sm" method="post" action="{% url 'users' %}">

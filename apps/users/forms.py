@@ -7,7 +7,7 @@ from apps.gym.models import GymSession, Plan
 from .models import User
 
 
-class UserProfileForm(forms.ModelForm):
+class UserCreateForm(forms.ModelForm):
     phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}),
                                     label="Номер телефона")
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
@@ -35,6 +35,17 @@ class UserProfileForm(forms.ModelForm):
 
         thirty_days_later = date.today() + timedelta(days=30)
         self.fields['end_date'].initial = thirty_days_later
+
+
+class UserUpdateForm(forms.Form):
+    user_id = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                 label="ID")
+    phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                   label="Номер телефона")
+    first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                 label="Имя")
+    last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                label="Фамилия")
 
 
 class AttendanceForm(forms.ModelForm):
