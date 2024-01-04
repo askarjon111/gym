@@ -14,7 +14,7 @@ from apps.gym.forms import AddSubscriptionForm
 
 from apps.users.models import User
 from apps.gym.models import GymSession, Plan, Subscription
-from apps.users.forms import AttendanceForm, UserCreateForm, UserUpdateForm
+from apps.users.forms import AttendanceForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
 
 
 class CreateUser(LoginRequiredMixin, CreateView):
@@ -141,3 +141,19 @@ class LogOutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         return redirect(self.login_url)
+
+
+class UserRegistrationView(View):
+    template_name = 'users/register.html'
+
+    def get(self, request):
+        form = UserRegistrationForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+        return render(request, self.template_name, {'form': form})
+

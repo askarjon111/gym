@@ -4,38 +4,47 @@ Releases:
     -- Attandance table
     -- Permissions/Auth
 
+
+    Models:
+    1. User():
+        name
+        surname
+        phone_number
+        email
+        profile_picture
+        gender
+        date_of_birth
+
+
+    2. UserProfile():
+        User(One2One)
+        weight
+        height
+        biceps
+        triceps
+        breasts
+        guts
+        type(trainer/member)
+
+
+    3. Plan():
+        name
+        description
+        price
+        days
+
+    4. Subscription():
+        User(FK)
+        plan
+        status
+        start_date
+        end_date
+
 --------------------------------
-Models:
-1. User():
-    name
-    surname
-    phone_number
-    email
-    profile_picture
-    gender
-    date_of_birth
 
-
-2. UserProfile():
-    User(One2One)
-    weight
-    height
-    biceps
-    triceps
-    breasts
-    guts
-    type(trainer/member)
-
-
-3. Plan():
-    name
-    description
-    price
-    days
-
-4. Subscription():
-    User(FK)
-    plan
-    status
-    start_date
-    end_date
+2. First Release
+    -- Register gyms
+    -- Register gym staff
+    -- Different plans for gyms
+    -- Authorization system
+    -- App startup data generator

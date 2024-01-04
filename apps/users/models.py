@@ -4,6 +4,15 @@ from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
 
 from apps.common.models import BaseModel
 from apps.users.managers import UserManager
+from apps.controls.models import Gym
+
+
+class GymRole(BaseModel):
+    title = models.CharField(max_length=255)
+    gym = models.ForeignKey(Gym,blank=True, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
@@ -12,6 +21,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone_number = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
+    roles = models.ManyToManyField(GymRole, related_name='users')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     # objects = UserManager()

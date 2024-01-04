@@ -2,6 +2,7 @@ from datetime import date, timedelta
 from django import forms
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 
 from apps.gym.models import GymSession, Plan
 from .models import User
@@ -70,3 +71,10 @@ class AttendanceForm(forms.ModelForm):
                                  message="У участника нет действующего действующего плана подписки.")
             return redirect('users')
         return instance
+
+
+class UserRegistrationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['phone_number', 'first_name',
+                  'last_name', 'password1', 'password2']

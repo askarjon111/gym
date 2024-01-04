@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.common',
     'apps.users',
     'apps.gym',
+    'apps.controls',
 ]
 
 MIDDLEWARE = [

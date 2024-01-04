@@ -1,10 +1,10 @@
-from django.shortcuts import redirect
 from django.utils import timezone
 
 from django.db import models
 
 from apps.common.models import BaseModel
 from apps.users.models import User
+from apps.controls.models import Gym
 
 
 class Plan(BaseModel):
@@ -12,6 +12,7 @@ class Plan(BaseModel):
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
     sessions = models.SmallIntegerField(default=0)
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
