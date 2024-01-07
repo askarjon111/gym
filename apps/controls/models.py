@@ -1,5 +1,6 @@
 from django.db import models
 from apps.common.models import BaseModel
+from apps.gym.managers import GymManager
 
 
 class GymPlan(BaseModel):
@@ -15,6 +16,8 @@ class GymPlan(BaseModel):
 class Gym(BaseModel):
     name = models.CharField(max_length=255)
     gym_plan = models.ForeignKey(GymPlan, on_delete=models.SET_NULL,blank=True, null=True)
+
+    objects = GymManager()
 
     def __str__(self):
         return self.name

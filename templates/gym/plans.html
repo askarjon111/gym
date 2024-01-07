@@ -26,17 +26,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <form method="get" class="form-inline ml-auto">
-                        <div class="input-group input-group-sm">
-                            <input name="q" value="{{ request.GET.q }}" class="form-control form-control-navbar"
-                                type="search" placeholder="Поиск" aria-label="Поиск">
-                            <div class="input-group-append">
-                                <button class="btn btn-navbar" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    <button href="#" class="float-right btn btn-primary" title="Добавить подписку" data-toggle="modal"
+                        data-target="#modal-add-plan"><i class="fa-solid fa-plus"></i> Добавить план</button>
                 </div>
                 <div class="card-body">
                     <table id="example2" class="table table-bordered table-hover">
@@ -76,6 +67,30 @@
         <div class="col-6">
             {% include 'blocks/_pagination.html' %}
         </div>
+    </div>
+    <div class="modal fade" id="modal-add-plan">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавить план</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'add-plan' %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div>
 </section>
 {% endblock content %}

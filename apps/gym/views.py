@@ -1,22 +1,28 @@
 from datetime import timedelta
 from django.shortcuts import redirect, render
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from apps.gym.forms import AddSubscriptionForm
+from apps.controls.models import Gym
+from apps.gym.forms import AddNewPlanForm, AddSubscriptionForm
 
 
 from apps.gym.models import GymSession, Plan, Subscription
 from apps.users.models import User
+from apps.users.permissions import gym_manager_required
 
 
-@login_required(login_url = 'login')
+@gym_manager_required(login_url='login')
 def home(request):
-    users = User.objects.all()
+    gym = request.user.gym
+    if gym:
+        users = Gym.objects.get_users(gym.id)
+
     active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now(),
-                                                       status=Subscription.STATUS_CHOICES[0][0])
+                                                       status=Subscription.STATUS_CHOICES[0][0],
+                                                       plan__gym=gym)
     active_members = [subscription.member for subscription in active_subscriptions]
     new_members = users.filter(created_at__gte=timezone.now() - timedelta(days=7)).count()
     return render(request, 'home.html', context={"users": users.count(),
@@ -24,7 +30,7 @@ def home(request):
                                                  "new_members": new_members})
 
 
-@login_required(login_url = 'login')
+@gym_manager_required(login_url='login')
 @api_view(['POST'])
 def create_session_view(request):
     member_id = request.POST.get('member_id')
@@ -32,18 +38,34 @@ def create_session_view(request):
     if member:
         GymSession.objects.create(member=member)
 
-
     return Response({"status": "ok"})
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class PlansView(View):
     template_name = 'gym/plans.html'
+    form = AddNewPlanForm
 
     def get(self, request):
         plans = Plan.objects.all()
-        return render(request, self.template_name, {'plans': plans})
+        return render(request, self.template_name, {'plans': plans, 'form': AddNewPlanForm})
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class AddNewPlanView(View):
+    model = Plan
+    template_name = 'users/plans.html'
+
+    def post(self, request):
+        form = AddNewPlanForm(request.POST)
+        if form.is_valid():
+            form.save(gym=self.request.user.gym)
+        else:
+            print(form.errors)
+        return redirect('plans')
+
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class AddSubscriptionView(View):
     model = Subscription
     template_name = 'users/member.html'

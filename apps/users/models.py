@@ -22,9 +22,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     roles = models.ManyToManyField(GymRole, related_name='users')
+    gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    # objects = UserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'
 
@@ -68,6 +69,16 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             left = all_sessions - attended_sessions
             return left
         return 0
+
+    @property
+    def get_gym(self):
+        if self.roles.last():
+            gym = self.roles.last().gym
+            return gym
+        elif self.plan:
+            return self.plan.gym
+        else:
+            return None
 
     objects = UserManager()
 

@@ -8,13 +8,16 @@ from django.utils import timezone
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, CreateView, FormView
 from django.db.models import Q
+from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
 
 from apps.users.models import User
 from apps.gym.models import GymSession, Plan, Subscription
 from apps.users.forms import AttendanceForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
+from apps.users.permissions import gym_manager_required
 
 
 class CreateUser(LoginRequiredMixin, CreateView):
@@ -23,7 +26,7 @@ class CreateUser(LoginRequiredMixin, CreateView):
     template_name = 'users/add_user.html'
     login_url = 'login'
 
-
+    @method_decorator(gym_manager_required(login_url='login'))
     def post(self, request):
         form = UserCreateForm(request.POST)
         if form.is_valid():
@@ -46,9 +49,12 @@ class MembersListView(LoginRequiredMixin, View):
     paginate_by = 5
     login_url = 'login'
 
+    @method_decorator(gym_manager_required(login_url='login'))
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('q')
-        members = User.objects.all().order_by('-id')
+        gym = self.request.user.gym
+        if gym:
+            members = Gym.objects.get_users(gym.id).order_by('-id')
         now = timezone.now()
 
         if query:
@@ -63,6 +69,7 @@ class MembersListView(LoginRequiredMixin, View):
                                                     'now': now,
                                                     'add_subscription_form': AddSubscriptionForm()})
 
+    @method_decorator(gym_manager_required(login_url='login'))
     def post(self, request, *args, **kwargs):
         form = AttendanceForm(request.POST, request=request)
         if form.is_valid():
@@ -72,11 +79,11 @@ class MembersListView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form})
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UserDetail(LoginRequiredMixin, DetailView):
     login_url = 'login'
     model = User
     template_name = 'users/member.html'
-
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -89,6 +96,7 @@ class UserDetail(LoginRequiredMixin, DetailView):
         return context
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UserUpdateView(LoginRequiredMixin, FormView):
     login_url = 'login'
     template_name = 'users/member.html'
@@ -135,6 +143,7 @@ def login_view(request):
     return render(request, 'users/login.html', {'form': form})
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class LogOutView(LoginRequiredMixin, View):
     login_url = 'login'
 
@@ -143,6 +152,7 @@ class LogOutView(LoginRequiredMixin, View):
         return redirect(self.login_url)
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UserRegistrationView(View):
     template_name = 'users/register.html'
 
@@ -156,4 +166,3 @@ class UserRegistrationView(View):
             form.save()
             return redirect('login')
         return render(request, self.template_name, {'form': form})
-
