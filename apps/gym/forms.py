@@ -41,9 +41,9 @@ class AddNewPlanForm(forms.ModelForm):
     description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Описание")
     price = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Сессии")
-    sessions = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Цена")
+    sessions = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Сессии")
 
     class Meta:
         model = Plan

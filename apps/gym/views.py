@@ -1,5 +1,5 @@
 from datetime import timedelta
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -77,3 +77,16 @@ class AddSubscriptionView(View):
         else:
             print(form.errors)
         return redirect('user-details', form.data['member'])
+
+
+class DeletePlanView(View):
+    template_name = 'plans.html'
+
+    def get(self, request, plan_id):
+        plan = get_object_or_404(Plan, id=plan_id)
+        return render(request, self.template_name, {'plan': plan})
+
+    def post(self, request, pk):
+        plan = get_object_or_404(Plan, id=pk)
+        plan.delete()
+        return redirect('plans')
