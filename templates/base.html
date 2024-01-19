@@ -96,7 +96,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="{% url 'add-user' %}" class="nav-link {% block add_user %}{% endblock %}">
-                                <i class="fa-solid fa-plus nav-icon"></i>
+                                <i class="fa-solid fa-person-circle-plus nav-icon"></i>
                                 <p>Новый клиент</p>
                             </a>
                         </li>
@@ -119,6 +119,13 @@
                                 <p>Персонал</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{% url 'statistics' %}" class="nav-link {% block statistics %}{% endblock %}">
+                                <i class="fa-solid fa-chart-line nav-icon"></i>
+                                <p>Статистика</p>
+                            </a>
+                        </li>
+                        
                     </ul>
                 </nav>
             </div>

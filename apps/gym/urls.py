@@ -1,13 +1,14 @@
 from django.urls import path
 
-from .views import home, create_session_view, PlansView, AddSubscriptionView, AddNewPlanView, DeletePlanView
+from .views.main import home, PlansView, AddSubscriptionView, AddNewPlanView, DeletePlanView
+from .views.statistics import satistics
 
 urlpatterns = [
     path('', home, name='home'),
-    path('create-session/', create_session_view, name='create-session'),
     path('add-subscription/', AddSubscriptionView.as_view(), name='add-subscription'),
     path('add-plan/', AddNewPlanView.as_view(), name='add-plan'),
     path('plans/', PlansView.as_view(), name='plans'),
     path('plans/<int:pk>/delete/', DeletePlanView.as_view(), name='delete-plan'),
+    path('statistics/', satistics, name="statistics")
 ]
 

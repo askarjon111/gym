@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %} - Статистика{% endblock title %}
+
+{% block statistics %}active{% endblock %}
+{% block style %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+{% endblock style %}
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Статистика</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">Статистика</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ all_members }}</h3>
+                    <p>Все пользователи</p>
+                </div>
+                <div class="icon">
+                    <i class="fa-solid fa-person"></i>
+                </div>
+                <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-orange">
+                <div class="inner">
+                    <h3>{{ active_members }}</h3>
+                    <p>Активные клиенты</p>
+                </div>
+                <div class="icon">
+                    <i class="fa-solid fa-person"></i>
+                </div>
+                <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div><div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ new_members }}</h3>
+                    <p>Новые клиенты</p>
+                </div>
+                <div class="icon">
+                    <i class="fa-solid fa-person"></i>
+                </div>
+                <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+    
+</section>
+{% endblock content %}
+{% block script %}
+<script>
+    let ctx = document.getElementById("chart").getContext("2d");
+
+        let chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: ["2020/Q1", "2020/Q2", "2020/Q3", "2020/Q4"],
+                datasets: [
+                    {
+                        label: "Gross volume ($)",
+                        backgroundColor: "#79AEC8",
+                        borderColor: "#417690",
+                        data: [26900, 28700, 27300, 29200]
+                    }
+                ]
+            },
+            options: {
+                title: {
+                    text: "Gross Volume in 2020",
+                    display: true
+                }
+            }
+        });
+</script>
+{% endblock script %}

@@ -30,17 +30,6 @@ def home(request):
                                                  "new_members": new_members})
 
 
-@gym_manager_required(login_url='login')
-@api_view(['POST'])
-def create_session_view(request):
-    member_id = request.POST.get('member_id')
-    member = User.objects.filter(id=member_id).first()
-    if member:
-        GymSession.objects.create(member=member)
-
-    return Response({"status": "ok"})
-
-
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class PlansView(View):
     template_name = 'gym/plans.html'
