@@ -29,6 +29,19 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     USERNAME_FIELD = 'phone_number'
 
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['phone_number'])
+        ]
+
+
+    def save(self, *args, **kwargs):
+        self.phone_number = self.phone_number.replace(" ", "")
+        self.phone_number = self.phone_number.replace("+", "")
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.phone_number
 

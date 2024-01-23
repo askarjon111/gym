@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, CreateView, FormView
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
@@ -20,18 +21,18 @@ from apps.users.forms import AttendanceForm, UserCreateForm, UserRegistrationFor
 from apps.users.permissions import gym_manager_required
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class CreateUser(LoginRequiredMixin, CreateView):
     model = User
     form_class = UserCreateForm
     template_name = 'users/add_user.html'
     login_url = 'login'
 
-    @method_decorator(gym_manager_required(login_url='login'))
     def post(self, request):
         form = UserCreateForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = User.objects.get(phone_number=form.data['phone_number'])
+            instance = form.save()
+            user = User.objects.get(phone_number=instance.phone_number)
             plan = Plan.objects.get(id=form.data['plan'])
             subs = Subscription.objects.create(member=user,
                                                plan=plan,
@@ -43,13 +44,13 @@ class CreateUser(LoginRequiredMixin, CreateView):
         return redirect('users')
 
 
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class MembersListView(LoginRequiredMixin, View):
     template_name = 'users/members.html'
     context_object_name = 'members'
-    paginate_by = 5
+    paginate_by = 50
     login_url = 'login'
 
-    @method_decorator(gym_manager_required(login_url='login'))
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('q')
         gym = self.request.user.gym
@@ -63,13 +64,21 @@ class MembersListView(LoginRequiredMixin, View):
                 Q(first_name__icontains=query) |
                 Q(last_name__icontains=query)
             )
+        paginator = Paginator(members, self.paginate_by)
+        page = request.GET.get('page')
+
+        try:
+            members = paginator.page(page)
+        except PageNotAnInteger:
+            members = paginator.page(1)
+        except EmptyPage:
+            members = paginator.page(paginator.num_pages)
         form = AttendanceForm()
         return render(request, self.template_name, {'members': members,
                                                     'form': form,
                                                     'now': now,
-                                                    'add_subscription_form': AddSubscriptionForm()})
+                                                    'add_subscription_form': AddSubscriptionForm(request=self.request)})
 
-    @method_decorator(gym_manager_required(login_url='login'))
     def post(self, request, *args, **kwargs):
         form = AttendanceForm(request.POST, request=request)
         if form.is_valid():
@@ -88,10 +97,13 @@ class UserDetail(LoginRequiredMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         if kwargs['object'].subscription:
-            context['attended_sessions'] = GymSession.objects.filter(member=kwargs['object'], subscription=kwargs['object'].subscription)
-            context['list'] = kwargs['object'].plan.sessions - context['attended_sessions'].count()
+            context['attended_sessions'] = GymSession.objects.filter(
+                member=kwargs['object'], subscription=kwargs['object'].subscription)
+            context['list'] = kwargs['object'].plan.sessions - \
+                context['attended_sessions'].count()
             context['list'] = 0 if context['list'] < 0 else context['list']
-        context['add_subscription_form'] = AddSubscriptionForm()
+        context['add_subscription_form'] = AddSubscriptionForm(
+            request=self.request)
         context['now'] = timezone.now()
         return context
 
@@ -138,7 +150,6 @@ def login_view(request):
             print(form.errors)
     else:
         form = AuthenticationForm()
-
 
     return render(request, 'users/login.html', {'form': form})
 

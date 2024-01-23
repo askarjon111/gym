@@ -19,18 +19,25 @@ class Plan(BaseModel):
 
 
 class Subscription(BaseModel):
-    STATUS_CHOICES=(
+    STATUS_CHOICES = (
         ('active', 'Активный'),
         ('inactive', 'Неактивный'),
     )
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+    status = models.CharField(
+        max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][1])
     start_date = models.DateField()
     end_date = models.DateField()
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['member'])
+        ]
+
     def save(self, *args, **kwargs):
-        active_subscriptions = self.member.subscription_set.filter(status=self.STATUS_CHOICES[0][0])
+        active_subscriptions = self.member.subscription_set.filter(
+            status=self.STATUS_CHOICES[0][0])
         if active_subscriptions.count():
             active_subscriptions.update(status=self.STATUS_CHOICES[1][0])
 
@@ -49,7 +56,8 @@ class GymSession(BaseModel):
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
     member = models.ForeignKey(User, on_delete=models.CASCADE)
-    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    subscription = models.ForeignKey(
+        Subscription, on_delete=models.SET_NULL, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         try:
@@ -59,9 +67,10 @@ class GymSession(BaseModel):
                 start_date__lte=timezone.now().date(),
                 end_date__gte=timezone.now().date()
             )
-            self.subscription = subscription            
+            self.subscription = subscription
         except Subscription.DoesNotExist:
-            raise ValueError("Member does not have a valid ongoing subscription plan.")
+            raise ValueError(
+                "Member does not have a valid ongoing subscription plan.")
 
         if self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
             self.subscription.status = Subscription.STATUS_CHOICES[1][0]

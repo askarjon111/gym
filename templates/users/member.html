@@ -141,7 +141,7 @@
                                                 {% for sub in user.subscription_set.all|dictsort:'start_date' %}
                                                 {% with percent=sub.attendance_percentage %}
                                                 <tr>
-                                                    <td>{{ forloop.counter }}.</td>
+                                                    <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>
                                                     <td>
                                                         <div class="progress progress-xs">

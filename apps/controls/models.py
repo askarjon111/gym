@@ -51,3 +51,9 @@ class Gym(BaseModel):
         registered = timezone.now() - timedelta(days=3)
         return self.members.filter(subscription__plan__gym_id=self.id,
                                    created_at__gte=registered)
+
+    @property
+    def plans(self):
+        """Returns all plans of the gym"""
+        from apps.gym.models import Plan
+        return Plan.objects.filter(gym__id=self.id)

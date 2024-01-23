@@ -1,4 +1,5 @@
-from datetime import date, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from django import forms
 from apps.controls.models import Gym
 
@@ -25,11 +26,16 @@ class AddSubscriptionForm(forms.ModelForm):
         fields = ['member', 'plan', 'start_date', 'end_date']
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
+        if self.request and self.request.user.is_authenticated:
+            self.fields['plan'].queryset = Plan.objects.filter(gym=self.request.user.gym)
+            self.fields['member'].queryset = Gym.objects.get_users(
+                self.request.user.gym.id)
 
-        self.fields['start_date'].initial = date.today()
+        self.fields['start_date'].initial = timezone.now()
 
-        thirty_days_later = date.today() + timedelta(days=30)
+        thirty_days_later = timezone.now() + timedelta(days=31)
         self.fields['end_date'].initial = thirty_days_later
 
 
