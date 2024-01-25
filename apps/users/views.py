@@ -48,7 +48,7 @@ class CreateUser(LoginRequiredMixin, CreateView):
 class MembersListView(LoginRequiredMixin, View):
     template_name = 'users/members.html'
     context_object_name = 'members'
-    paginate_by = 50
+    paginate_by = 20
     login_url = 'login'
 
     def get(self, request, *args, **kwargs):
@@ -65,7 +65,7 @@ class MembersListView(LoginRequiredMixin, View):
                 Q(last_name__icontains=query)
             )
         paginator = Paginator(members, self.paginate_by)
-        page = request.GET.get('page')
+        page = self.request.GET.get('page')
 
         try:
             members = paginator.page(page)
@@ -73,6 +73,7 @@ class MembersListView(LoginRequiredMixin, View):
             members = paginator.page(1)
         except EmptyPage:
             members = paginator.page(paginator.num_pages)
+
         form = AttendanceForm()
         return render(request, self.template_name, {'members': members,
                                                     'form': form,
