@@ -3,6 +3,7 @@ from django import forms
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from apps.controls.models import Gym
 
 from apps.gym.models import GymSession, Plan
 from .models import User
@@ -30,7 +31,12 @@ class UserCreateForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'phone_number', 'plan', 'start_date', 'end_date')
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
+
+        if self.request and self.request.user.is_authenticated:
+            self.fields['plan'].queryset = Plan.objects.filter(
+                gym=self.request.user.gym)
 
         self.fields['start_date'].initial = date.today()
 

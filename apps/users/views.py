@@ -22,14 +22,13 @@ from apps.users.permissions import gym_manager_required
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
-class CreateUser(LoginRequiredMixin, CreateView):
+class CreateUser(View):
     model = User
-    form_class = UserCreateForm
     template_name = 'users/add_user.html'
     login_url = 'login'
 
     def post(self, request):
-        form = UserCreateForm(request.POST)
+        form = UserCreateForm(request.POST, request=request)
         if form.is_valid():
             instance = form.save()
             user = User.objects.get(phone_number=instance.phone_number)
@@ -42,6 +41,9 @@ class CreateUser(LoginRequiredMixin, CreateView):
         else:
             print(form.errors)
         return redirect('users')
+
+    def get(self, request):
+        return render(request, self.template_name, {'form': UserCreateForm(request=request)})
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
@@ -84,7 +86,11 @@ class MembersListView(LoginRequiredMixin, View):
         form = AttendanceForm(request.POST, request=request)
         if form.is_valid():
             form.save(start=timezone.now())
-            return redirect('users')
+            referer = request.META.get('HTTP_REFERER')
+            if referer and reverse('user-details', args=[str(request.POST['member'])]) in referer:
+                return redirect(referer)
+            else:
+                return redirect('users')
 
         return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form})
 

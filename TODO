@@ -48,3 +48,24 @@ Releases:
     -- Different plans for gyms
     -- Authorization system
     -- App startup data generator
+    -- Turnstile
+
+    -- Members:
+        -- List filter
+        -- List edit button
+        -- Payment status
+        -- Export
+        -- Profile picture
+        -- Add Member button
+        -- Select and bulk actions [freeze accounts, cancel membership, send text]
+        -- Joined at field
+        -- Edit
+        -- Member attendance as a bar chart with dates and length of session
+        -- Current subscription start date and end date used and remaining sessions
+        -- Payment history
+        -- Sessions list, add session, delete session, edit session
+        -- Message system
+        -- Member unique 5 digit id
+    -- Payment/Bills:
+        -- Bill Model
+        -- 
