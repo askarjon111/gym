@@ -1,4 +1,3 @@
-from typing import Any
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -7,9 +6,8 @@ from django.views import View
 from django.utils import timezone
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, CreateView, FormView
+from django.views.generic import DetailView, FormView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from apps.controls.models import Gym
