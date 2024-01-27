@@ -48,6 +48,14 @@ class Subscription(BaseModel):
         attended_days = self.gymsession_set.count()
         return round((attended_days / total_days) * 100 if total_days > 0 else 0)
 
+    @property
+    def used_sessions(self):
+        return self.gymsession_set.count()
+
+    @property
+    def left_sessions(self):
+        return self.plan.sessions - self.used_sessions
+
     def __str__(self):
         return f"{self.plan}"
 
@@ -69,6 +77,14 @@ class GymSession(BaseModel):
             )
             self.subscription = subscription
         except Subscription.DoesNotExist:
+            expired_subscriptions = Subscription.objects.filter(
+            member=self.member,
+            status=Subscription.STATUS_CHOICES[0][0],
+            end_date__lt=timezone.now().date()
+            )
+            if expired_subscriptions:
+                expired_subscriptions.update(status=Subscription.STATUS_CHOICES[1][0])
+
             raise ValueError(
                 "Member does not have a valid ongoing subscription plan.")
 

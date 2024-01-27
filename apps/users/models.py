@@ -46,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         return self.phone_number
 
     @property
-    def plan(self) -> None:
+    def plan(self):
         from apps.gym.models import Subscription
         subscription = Subscription.objects.filter(member=self).last()
         if subscription:
@@ -67,9 +67,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     @property
     def attended(self):
         from apps.gym.models import GymSession
-        session = GymSession.objects.filter(member=self,
+        if self.subscription:
+            session = GymSession.objects.filter(member=self,
                                             start__date=datetime.now().date()).first()
-        return bool(session)
+            return bool(session)
+        return True
+
 
     @property
     def left_sessions(self):

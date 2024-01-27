@@ -131,28 +131,22 @@
                                                 <tr>
                                                     <th style="width: 10px">#</th>
                                                     <th>План</th>
-                                                    <th>Процент посещаемости</th>
+                                                    <th>Посещаемость</th>
                                                     <th>Начал</th>
                                                     <th>Заканчивается</th>
                                                     <th>Статус</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for sub in user.subscription_set.all|dictsort:'start_date' %}
-                                                {% with percent=sub.attendance_percentage %}
+                                                {% for sub in user.subscription_set.all|dictsortreversed:'start_date' %}
                                                 <tr>
                                                     <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>
-                                                    <td>
-                                                        <div class="progress progress-xs">
-                                                            <div class="progress-bar progress-bar-primary" style="width: {{ percent }}%">{{ percent }}%</div>
-                                                        </div>
-                                                    </td>
+                                                    <td>{{ sub.used_sessions }}/{{ sub.plan.sessions }}</td>
                                                     <td>{{ sub.start_date }}</td>
                                                     <td>{{ sub.end_date }}</td>
-                                                    <td><span class="badge bg-primary">{{ sub.get_status_display }}</span></td></td>
+                                                    <td><span class="badge bg-{% if sub.status == 'active' %}success{% elif sub.status == 'inactive' %}danger{% endif %}">{{ sub.get_status_display }}</span></td></td>
                                                 </tr>
-                                                {% endwith %}
                                                 {% endfor %}
                                             </tbody>
                                         </table>
