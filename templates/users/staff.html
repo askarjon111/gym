@@ -2,20 +2,20 @@
 {% load static %}
 {% block title %} - Клиенты {% endblock title %}
 
-{% block members %}active{% endblock %}
-{% block open_members %}menu-open{% endblock %}
+{% block staff %}active{% endblock %}
+{% block open_staff %}menu-open{% endblock %}
 
 {% block content %}
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Все клиенты</h1>
+                <h1>Персонал</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
-                    <li class="breadcrumb-item active">Все клиенты</li>
+                    <li class="breadcrumb-item active">Персонал</li>
                 </ol>
             </div>
         </div>
@@ -51,7 +51,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for member in objects %}
+                            {% for member in members %}
                             <tr>
                                 <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'user-details' member.pk %}">{{ member.fullname }}</a></p></td>
                                 <td>{{ member.phone_number }}</td>

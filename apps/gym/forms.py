@@ -30,7 +30,7 @@ class AddSubscriptionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.request and self.request.user.is_authenticated:
             self.fields['plan'].queryset = Plan.objects.filter(gym=self.request.user.gym)
-            self.fields['member'].queryset = Gym.objects.get_users(
+            self.fields['member'].queryset = Gym.objects.get_members(
                 self.request.user.gym.id)
 
         self.fields['start_date'].initial = timezone.now()

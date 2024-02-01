@@ -112,7 +112,7 @@
                             <div class="active tab-pane" id="activity">
                                 {% if object.subscription %}
                                     {% for session in attended_sessions %}
-                                        <button class="attendance-button-active">
+                                        <button class="attendance-button-active" title="{{ session.start }}">
                                         </button>
                                     {% endfor %}
                                     {% if list %}
@@ -143,8 +143,8 @@
                                                     <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>
                                                     <td>{{ sub.used_sessions }}/{{ sub.plan.sessions }}</td>
-                                                    <td>{{ sub.start_date }}</td>
-                                                    <td>{{ sub.end_date }}</td>
+                                                    <td>{{ sub.start_date|date:'d.m.Y' }}</td>
+                                                    <td>{{ sub.end_date|date:'d.m.Y' }}</td>
                                                     <td><span class="badge bg-{% if sub.status == 'active' %}success{% elif sub.status == 'inactive' %}danger{% endif %}">{{ sub.get_status_display }}</span></td></td>
                                                 </tr>
                                                 {% endfor %}

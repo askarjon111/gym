@@ -26,7 +26,7 @@ class Subscription(BaseModel):
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     status = models.CharField(
-        max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][1])
+        max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
     start_date = models.DateField()
     end_date = models.DateField()
 
@@ -78,12 +78,13 @@ class GymSession(BaseModel):
             self.subscription = subscription
         except Subscription.DoesNotExist:
             expired_subscriptions = Subscription.objects.filter(
-            member=self.member,
-            status=Subscription.STATUS_CHOICES[0][0],
-            end_date__lt=timezone.now().date()
+                member=self.member,
+                status=Subscription.STATUS_CHOICES[0][0],
+                end_date__lt=timezone.now().date()
             )
             if expired_subscriptions:
-                expired_subscriptions.update(status=Subscription.STATUS_CHOICES[1][0])
+                expired_subscriptions.update(
+                    status=Subscription.STATUS_CHOICES[1][0])
 
             raise ValueError(
                 "Member does not have a valid ongoing subscription plan.")

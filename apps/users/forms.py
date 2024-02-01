@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from apps.controls.models import Gym
 
 from apps.gym.models import GymSession, Plan
-from .models import User
+from .models import User, UserProfile
 
 
 class UserCreateForm(forms.ModelForm):
@@ -53,6 +53,52 @@ class UserUpdateForm(forms.Form):
                                  label="Имя")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
                                 label="Фамилия")
+
+
+class UserProfileCreateForm(forms.ModelForm):
+    weight = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                              label="Вес")
+    height = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                              label="Рост")
+    biceps = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                              label="Бицепс")
+    triceps = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                               label="Трицепс")
+    chest = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                             label="Грудь")
+    guts = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
+                            label="Живот")
+    profile_picture = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
+                                       label="Фото профиля")
+    gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES,
+                               widget=forms.Select(
+                                   attrs={'class': 'form-control'}),
+                               label="Пол")
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
+                                                                  'type': 'date',
+                                                                  'format': 'dd/mm/yyyy'}),
+                                    label='Дата рождения')
+    # user_type = forms.ChoiceField(choices=UserProfile.USER_TYPE_CHOICES,
+    #                               widget=forms.Select(
+    #                                   attrs={'class': 'form-control'}),
+    #                               label="Тип пользователя")
+
+    class Meta:
+        model = UserProfile
+        fields = ('weight', 'height', 'biceps', 'triceps', 'chest', 'guts', 'profile_picture',
+                  'gender', 'date_of_birth', 'user_type')
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        user = self.request.user
+        if user:
+            profile.user = user
+            profile.save()
+        return profile
 
 
 class AttendanceForm(forms.ModelForm):

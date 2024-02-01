@@ -18,13 +18,13 @@ class GymPlan(BaseModel):
 
 class Gym(BaseModel):
     name = models.CharField(max_length=255)
-    gym_plan = models.ForeignKey(GymPlan, on_delete=models.SET_NULL,blank=True, null=True)
+    gym_plan = models.ForeignKey(
+        GymPlan, on_delete=models.SET_NULL, blank=True, null=True)
 
     objects = GymManager()
 
     def __str__(self):
         return self.name
-
 
     @property
     def active_subscirptions():
@@ -36,7 +36,6 @@ class Gym(BaseModel):
         """Returns all members of the gym"""
         from apps.users.models import User
         return User.objects.filter(subscription__plan__gym_id=self.id)
-
 
     @property
     def active_members(self):
@@ -57,3 +56,29 @@ class Gym(BaseModel):
         """Returns all plans of the gym"""
         from apps.gym.models import Plan
         return Plan.objects.filter(gym__id=self.id)
+
+
+# class GymInvoice(BaseModel):
+#     STATUS_CHOICES = (
+#         ('paid', 'Оплаченный'),
+#         ('peding', 'Ожидание'),
+#         ('canceled', 'Отменено'),
+#     )
+#     status = models.CharField(
+#         max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+#     gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+
+
+class GymSubscription(BaseModel):
+    plan = models.ForeignKey(GymPlan, on_delete=models.CASCADE)
+    STATUS_CHOICES = (
+        ('active', 'Активный'),
+        ('inactive', 'Неактивный'),
+    )
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+
+    start_date = models.DateField()
+    end_date = models.DateField()
+

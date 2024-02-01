@@ -18,7 +18,7 @@ from apps.users.permissions import gym_manager_required
 def home(request):
     gym = request.user.gym
     if gym:
-        users = Gym.objects.get_users(gym.id)
+        users = Gym.objects.get_members(gym.id)
 
     active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now(),
                                                        status=Subscription.STATUS_CHOICES[0][0],

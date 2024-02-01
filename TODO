@@ -69,3 +69,37 @@ Releases:
     -- Payment/Bills:
         -- Bill Model
         -- 
+
+
+
+Bot TZ:
+    Bot tili: Ru
+    Ulanish: API orqali
+
+    1. My Profile:
+        -- Profile details (first name,
+                            last name,
+                            phone number,
+                            birth date,
+                            weight,
+                            height,
+                            gender,
+                            profile pricture)
+
+        -- Edit data with inline buttons(first name,
+                                        last name,
+                                        phone number,
+                                        birth date,
+                                        weight,
+                                        height,
+                                        gender,
+                                        profile pricture)
+
+    2. Subscription:
+        -- Status
+        -- Start date / End date
+        -- Attended sessions / remaining sessions
+        -- Sessions history
+
+    3. QR Code:
+        -- Generate QR code button
