@@ -5,7 +5,7 @@ from apps.users.views import (CreateUser, MembersListView, UserDetail,
 
 urlpatterns = [
     path('', MembersListView.as_view(), name="users"),
-    path('staff/', StaffListView.as_view(), name="staf"),
+    path('staff/', StaffListView.as_view(), name="staff"),
     path('add-user', CreateUser.as_view(), name="add-user"),
     path('<int:pk>', UserDetail.as_view(), name="user-details"),
     path('<int:pk>/edit', UserUpdateView.as_view(), name="user-update"),

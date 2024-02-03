@@ -66,18 +66,18 @@ class MembersListView(LoginRequiredMixin, View):
                 Q(first_name__icontains=query) |
                 Q(last_name__icontains=query)
             )
-        paginator = Paginator(members, self.paginate_by)
+        paginator = Paginator(users, self.paginate_by)
         page = self.request.GET.get('page')
 
         try:
-            members = paginator.page(page)
+            users = paginator.page(page)
         except PageNotAnInteger:
-            members = paginator.page(1)
+            users = paginator.page(1)
         except EmptyPage:
-            members = paginator.page(paginator.num_pages)
+            users = paginator.page(paginator.num_pages)
 
         form = AttendanceForm()
-        return render(request, self.template_name, {'members': members,
+        return render(request, self.template_name, {'objects': users,
                                                     'form': form,
                                                     'now': now,
                                                     'add_subscription_form': AddSubscriptionForm(request=self.request)})

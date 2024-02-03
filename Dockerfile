@@ -1,20 +1,19 @@
+# Use the official Python image as the base image
 FROM python:3.10-slim
 
-RUN python3 -m pip install --upgrade pip
-
-# the base dir of the project.
+# Set the working directory
 WORKDIR /gym/
 
+# Copy the requirements file and install dependencies
 COPY requirements.txt requirements.txt
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install --upgrade pip && python3 -m pip install -r requirements.txt
 
+# Install Gunicorn
+RUN python3 -m pip install gunicorn
+
+COPY ./docker-entrypoint-initdb.d/init.sql /docker-entrypoint-initdb.d/
+
+# Copy the entire project into the image
 COPY . .
 
-
-FROM postgres:latest
-
-ENV POSTGRES_DB=gym
-ENV POSTGRES_USER=askar
-ENV POSTGRES_PASSWORD=salom123
-
-COPY init.sql .
+RUN python manage.py collectstatic --noinput
