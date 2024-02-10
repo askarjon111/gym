@@ -1,5 +1,5 @@
 from datetime import timedelta
-from django.utils import timezone
+from django.utils import timezone, dateformat
 from django import forms
 from apps.controls.models import Gym
 
@@ -9,17 +9,17 @@ from apps.users.models import User
 
 class AddSubscriptionForm(forms.ModelForm):
     member = forms.ModelChoiceField(queryset=User.objects.all(), required=True,
-                                    widget=forms.Select(attrs={'class': 'form-control'}),
+                                    widget=forms.Select(
+                                        attrs={'class': 'form-control'}),
                                     label="Пользователь")
     plan = forms.ModelChoiceField(queryset=Plan.objects.all(), required=True,
-                                    widget=forms.Select(attrs={'class': 'form-control'}),
-                                    label="План")
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control'}),
+                                  label="План")
     start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-                                                            'type': 'date',
-                                                            'format': 'dd/mm/yyyy'}), label='Дата начала')
+                                                               'type': 'date'}, format="%Y-%m-%d"))
     end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-                                                            'type': 'date',
-                                                            'format': 'dd/mm/yyyy'}), label='Дата окончания')
+                                                             'type': 'date'}, format="%Y-%m-%d"))
 
     class Meta:
         model = Subscription
@@ -29,23 +29,24 @@ class AddSubscriptionForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         if self.request and self.request.user.is_authenticated:
-            self.fields['plan'].queryset = Plan.objects.filter(gym=self.request.user.gym)
+            self.fields['plan'].queryset = Plan.objects.filter(
+                gym=self.request.user.gym)
             self.fields['member'].queryset = Gym.objects.get_members(
                 self.request.user.gym.id)
 
-        self.fields['start_date'].initial = timezone.now()
-
-        thirty_days_later = timezone.now() + timedelta(days=31)
-        self.fields['end_date'].initial = thirty_days_later
+            self.fields['start_date'].initial = timezone.now()
+            print(self.fields['start_date'].initial)
+            thirty_days_later = timezone.now() + timedelta(days=31)
+            self.fields['end_date'].initial = thirty_days_later
 
 
 class AddNewPlanForm(forms.ModelForm):
     gym = forms.ModelChoiceField(queryset=Gym.objects.all(), required=False,
-        widget=forms.Select(attrs={'class': 'form-control'}), label="Спортзал")
+                                 widget=forms.Select(attrs={'class': 'form-control'}), label="Спортзал")
     name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Название")
+                           label="Название")
     description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Описание")
+                                  label="Описание")
     price = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Цена")
     sessions = forms.IntegerField(
