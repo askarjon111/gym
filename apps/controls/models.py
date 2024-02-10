@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.db import models
 from django.utils import timezone
+from apps.common.choices import NOTIFICATION_TYPE_CHOICES, STATUS_CHOICES
 
 from apps.common.models import BaseModel
 from apps.gym.managers import GymManager
@@ -25,11 +26,6 @@ class Gym(BaseModel):
 
     def __str__(self):
         return self.name
-
-    @property
-    def active_subscirptions():
-        """Active subsctiptions of the gym"""
-        pass
 
     @property
     def members(self):
@@ -71,10 +67,6 @@ class Gym(BaseModel):
 
 class GymSubscription(BaseModel):
     plan = models.ForeignKey(GymPlan, on_delete=models.CASCADE)
-    STATUS_CHOICES = (
-        ('active', 'Активный'),
-        ('inactive', 'Неактивный'),
-    )
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
@@ -82,3 +74,18 @@ class GymSubscription(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
 
+
+class GymNotification(BaseModel):
+    title = models.CharField(max_length=250)
+    body = models.TextField(blank=True, null=True)
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+    send_at = models.DateTimeField(null=True)
+    type = models.CharField(max_length=7,
+                            choices=NOTIFICATION_TYPE_CHOICES,
+                            default=NOTIFICATION_TYPE_CHOICES[0][0])
+    status = models.CharField(
+        max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+
+    def __str__(self):
+        return self.title
+    

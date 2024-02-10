@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from apps.common.choices import STATUS_CHOICES
 from apps.controls.models import Gym
 from apps.gym.forms import AddNewPlanForm, AddSubscriptionForm
 
@@ -17,19 +18,12 @@ from apps.users.permissions import gym_manager_required
 @gym_manager_required(login_url='login')
 def home(request):
     gym = request.user.gym
-    if gym:
-        users = Gym.objects.get_members(gym.id)
-
-    active_subscriptions = Subscription.objects.filter(end_date__gte=timezone.now(),
-                                                       status=Subscription.STATUS_CHOICES[0][0],
-                                                       plan__gym=gym)
-    active_members = [
-        subscription.member for subscription in active_subscriptions]
-    new_members = users.filter(
-        created_at__gte=timezone.now() - timedelta(days=7)).count()
-    return render(request, 'home.html', context={"users": users.count(),
-                                                 "active_members": len(active_members),
-                                                 "new_members": new_members})
+    notifications = gym.gymnotification_set.filter(
+        status=STATUS_CHOICES[0][0]).order_by('-send_at')[:5]
+    return render(request, 'home.html', context={"users": len(gym.members),
+                                                 "active_members": len(gym.active_members),
+                                                 "new_members": len(gym.new_members),
+                                                 'notifications': notifications})
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
@@ -67,7 +61,7 @@ class AddSubscriptionView(View):
         form = AddSubscriptionForm(request.POST)
         if form.is_valid():
             subscription = form.save(commit=False)
-            subscription.status = Subscription.STATUS_CHOICES[0][0]
+            subscription.status = STATUS_CHOICES[0][0]
             subscription.save()
         else:
             print(form.errors)

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import random
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from apps.common.choices import STATUS_CHOICES
 
 from apps.controls.models import Gym, GymPlan
 from apps.gym.models import Plan, Subscription, GymSession, QRCode
@@ -131,7 +132,7 @@ class Command(BaseCommand):
                 Subscription.objects.create(
                     member=user,
                     plan=random.choice(plans),
-                    status=Subscription.STATUS_CHOICES[0][0],
+                    status=STATUS_CHOICES[0][0],
                     start_date=start_date,
                     end_date=start_date+timedelta(days=30)
                 )

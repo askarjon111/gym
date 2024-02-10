@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
+from apps.common.choices import STATUS_CHOICES
 
 from apps.common.models import BaseModel
 from apps.users.managers import UserManager
@@ -56,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     @property
     def subscription(self):
         from apps.gym.models import Subscription
-        subscription = Subscription.objects.filter(member=self, status=Subscription.STATUS_CHOICES[0][0]).last()
+        subscription = Subscription.objects.filter(member=self, status=STATUS_CHOICES[0][0]).last()
         if subscription:
             return subscription
 

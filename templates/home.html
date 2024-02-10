@@ -1,80 +1,112 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} | Главная {% endblock title %}
+
 {% block home %} active {% endblock home %}
-{% block head %}
-{% endblock head %}
+
+{% block style %}
+{% endblock style %}
+
 {% block content %}
 <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Добро пожаловать!</h1>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Добро пожаловать!</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item active">Главная /</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{ users }}</h3>
+            <p>Все пользователи</p>
           </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Главная /</li>
-            </ol>
+          <div class="icon">
+            <i class="fa-solid fa-person"></i>
+          </div>
+          <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i
+              class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ active_members }}</h3>
+
+            <p>Активные подписки</p>
+          </div>
+          <div class="icon">
+            <i class="fa-solid fa-person-running"></i>
+          </div>
+          <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i
+              class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ new_members }}</h3>
+            <p>Новые пользователи</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-person-add"></i>
+          </div>
+          <a href="{% url 'add-user' %}" class="small-box-footer">Добавить нового <i class="fas fa-plus"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>1</h3>
+            <p>Посещал сегодня</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-pie-graph"></i>
+          </div>
+          <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i
+              class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-exclamation-triangle"></i>
+              Уведомления
+            </h3>
+          </div>
+          <div class="card-body">
+            {% if notifications %}
+            {% for n in notifications %}
+            <div class="alert alert-{{ n.type }} alert-dismissible">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <h5>{{ n.title }}</h5>
+              <p class="text-lg-left">{% if n.body %}{{ n.body|truncatewords:15 }}{% endif %}</p>
+              <p class="text-sm-right">{{ n.send_at }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>У вас нет уведомлений. Хорошего дня! 😊</p>
+            {% endif %}
           </div>
         </div>
       </div>
     </div>
-
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-3 col-6">
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h3>{{ users }}</h3>
-                <p>Все пользователи</p>
-              </div>
-              <div class="icon">
-                <i class="fa-solid fa-person"></i>
-              </div>
-              <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <div class="col-lg-3 col-6">
-            <div class="small-box bg-success">
-              <div class="inner">
-                <h3>{{ active_members }}</h3>
-
-                <p>Активные подписки</p>
-              </div>
-              <div class="icon">
-                <i class="fa-solid fa-person-running"></i>
-              </div>
-              <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <div class="col-lg-3 col-6">
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3>{{ new_members }}</h3>
-                <p>Новые пользователи</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-person-add"></i>
-              </div>
-              <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <div class="col-lg-3 col-6">
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h3>1</h3>
-                <p>Посещал сегодня</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="{% url 'users' %}" class="small-box-footer">Посмотреть все <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  </div>
+</section>
 {% endblock content %}
 {% block script %}
 <script src="{% static 'assets/chart.js/Chart.min.js' %}"></script>

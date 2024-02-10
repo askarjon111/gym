@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, FormView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from apps.common.choices import STATUS_CHOICES
 from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
 
@@ -35,7 +36,7 @@ class CreateUser(View):
                                                plan=plan,
                                                start_date=form.data['start_date'],
                                                end_date=form.data['end_date'],
-                                               status=Subscription.STATUS_CHOICES[0][0])
+                                               status=STATUS_CHOICES[0][0])
 
         else:
             print(form.errors)
