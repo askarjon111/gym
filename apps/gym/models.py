@@ -13,6 +13,7 @@ class Plan(BaseModel):
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
     sessions = models.SmallIntegerField(default=0)
+    days = models.SmallIntegerField(default=1)
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
 
     def __str__(self):

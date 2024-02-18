@@ -21,6 +21,7 @@ class Gym(BaseModel):
     name = models.CharField(max_length=255)
     gym_plan = models.ForeignKey(
         GymPlan, on_delete=models.SET_NULL, blank=True, null=True)
+    telegram_bot_token = models.CharField(max_length=400, blank=True, null=True)
 
     objects = GymManager()
 

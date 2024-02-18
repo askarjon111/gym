@@ -37,6 +37,7 @@
                                 <th>Описание</th>
                                 <th>Цена</th>
                                 <th>Сессии</th>
+                                <th>Продолжительность</th>
                                 <th>Действие</th>
                             </tr>
                         </thead>
@@ -49,10 +50,12 @@
                                 </td>
                                 <td>{% if plan.description %}{{ plan.description }}{% endif %}</td>
                                 <td>{{ plan.price|floatformat:"-2"|default:"0"|intcomma }} сўм</td>
-                                <td>{{ plan.sessions }}</td>
-                                <td><button href="{% url 'delete-plan' plan.id %}" class="btn btn-danger btn-sm" title="Удалить план"
-                                    data-toggle="modal"
-                                    data-target="#modal-delete-plan-{{ plan.id }}"><i class="fas fa-trash"></i></button></td>
+                                <td>{% if plan.sessions > 0 %}{{ plan.sessions }} {% else %} ∞ {% endif %}</td>
+                                <td>{{ plan.days }} дней</td>
+                                <td><button href="{% url 'delete-plan' plan.id %}" class="btn btn-danger btn-sm"
+                                        title="Удалить план" data-toggle="modal"
+                                        data-target="#modal-delete-plan-{{ plan.id }}"><i
+                                            class="fas fa-trash"></i></button></td>
                             </tr>
                             <div class="modal fade" id="modal-delete-plan-{{ plan.id }}">
                                 <div class="modal-dialog">
@@ -67,10 +70,11 @@
                                             <p>Вы уверены, что хотите удалить этот план?</p>
                                         </div>
                                         <div class="modal-footer justify-content-between">
-                                            <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-outline-light"
+                                                data-dismiss="modal">Close</button>
                                             <form method="post" action="{% url 'delete-plan' plan.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-outline-light">Удалить</button>
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-light">Удалить</button>
                                             </form>
                                         </div>
                                     </div>
@@ -86,6 +90,7 @@
                                 <th>Описание</th>
                                 <th>Цена</th>
                                 <th>Сессии</th>
+                                <th>Продолжительность</th>
                                 <th>Действие</th>
                             </tr>
                         </tfoot>

@@ -1,5 +1,5 @@
 from datetime import timedelta
-from django.utils import timezone, dateformat
+from django.utils import timezone
 from django import forms
 from apps.controls.models import Gym
 
@@ -48,13 +48,15 @@ class AddNewPlanForm(forms.ModelForm):
     description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
                                   label="Описание")
     price = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Цена")
+        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Цена (сум)")
     sessions = forms.IntegerField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Сессии")
+        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Сессии (оставьте 0 для VIP-сессий)")
+    days = forms.IntegerField(
+        widget=forms.NumberInput(attrs={'class': 'form-control'}), label="Продолжительность (днях)")
 
     class Meta:
         model = Plan
-        fields = ['gym', 'name', 'description', 'price', 'sessions']
+        fields = ['gym', 'name', 'description', 'price', 'sessions', 'days']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
