@@ -13,9 +13,12 @@ class Command(BaseCommand):
     help = 'Creates dump data for the app'
 
     def handle(self, *args, **options):
-        self.create_gym_plans()
-        self.create_gyms()
-        self.create_users()
+        print("Creating gym plans...")
+        print(self.create_gym_plans())
+        print("Creating gyms...")
+        print(self.create_gyms())
+        print("Creating users...")
+        print(self.create_users())
 
         self.stdout.write(self.style.SUCCESS(
             'Dump data created successfully!'))
@@ -27,6 +30,7 @@ class Command(BaseCommand):
             name="Standart", description="Standart plan", price=500000)
         GymPlan.objects.create(
             name="Premium", description="Premium plan", price=900000)
+        return 'Gym plans created.'
 
     def create_gyms(self):
         gym_adjectives = [
@@ -91,9 +95,10 @@ class Command(BaseCommand):
                 name="VIP",
                 description="VIP план",
                 price=400000,
-                sessions=31,
+                sessions=0,
                 gym=gym)
             vip_plan.save()
+        return 'Gyms created.'
 
     def create_users(self):
         gyms = Gym.objects.all()
@@ -111,6 +116,7 @@ class Command(BaseCommand):
                     is_active=True,
                     is_staff=False,
                 )
+                user.gyms.add(gym)
 
                 UserProfile.objects.create(
                     user=user,
@@ -136,3 +142,4 @@ class Command(BaseCommand):
                     start_date=start_date,
                     end_date=start_date+timedelta(days=30)
                 )
+        return 'Users created.'

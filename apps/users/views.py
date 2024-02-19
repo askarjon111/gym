@@ -176,10 +176,6 @@ class UserUpdateView(LoginRequiredMixin, FormView):
         return {
             'first_name': self.request.user.first_name,
             'last_name': self.request.user.last_name,
-            'region': self.request.user.region,
-            'city': self.request.user.city,
-            'location': self.request.user.location,
-            'description': self.request.user.description,
             'telegram_id': self.request.user.telegram_id,
         }
 

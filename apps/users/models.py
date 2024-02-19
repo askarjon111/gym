@@ -10,7 +10,8 @@ from apps.controls.models import Gym
 
 class GymRole(BaseModel):
     title = models.CharField(max_length=255)
-    gym = models.ForeignKey(Gym,blank=True, null=True, on_delete=models.CASCADE)
+    gym = models.ForeignKey(Gym, blank=True, null=True,
+                            on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -23,19 +24,18 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     roles = models.ManyToManyField(GymRole, related_name='users')
-    gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, blank=True, null=True)
+    gyms = models.ManyToManyField(Gym, related_name='users')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    # telegram_id = models.CharField(max_length=20, unique=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'
-
 
     class Meta:
         indexes = [
             models.Index(fields=['phone_number'])
         ]
-
 
     def save(self, *args, **kwargs):
         self.phone_number = self.phone_number.replace(" ", "")
@@ -57,7 +57,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     @property
     def subscription(self):
         from apps.gym.models import Subscription
-        subscription = Subscription.objects.filter(member=self, status=STATUS_CHOICES[0][0]).last()
+        subscription = Subscription.objects.filter(
+            member=self, status=STATUS_CHOICES[0][0]).last()
         if subscription:
             return subscription
 
@@ -70,10 +71,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         from apps.gym.models import GymSession
         if self.subscription:
             session = GymSession.objects.filter(member=self,
-                                            start__date=datetime.now().date()).first()
+                                                start__date=datetime.now().date()).first()
             return bool(session)
         return True
 
+    @property
+    def gym(self):
+        return self.roles.last().gym if self.roles.last() else self.gyms.last()
 
     @property
     def left_sessions(self):
@@ -82,20 +86,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             from apps.gym.models import Subscription
             all_sessions = self.plan.sessions
             subscription = Subscription.objects.filter(member=self).last()
-            attended_sessions = GymSession.objects.filter(member=self, subscription=subscription).count()
+            attended_sessions = GymSession.objects.filter(
+                member=self, subscription=subscription).count()
             left = all_sessions - attended_sessions
             return left
         return 0
-
-    @property
-    def get_gym(self):
-        if self.roles.last():
-            gym = self.roles.last().gym
-            return gym
-        elif self.plan:
-            return self.plan.gym
-        else:
-            return None
 
     objects = UserManager()
 
@@ -103,23 +98,25 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 class UserProfile(BaseModel):
     """Profile model for user it saves users additional information"""
 
-    GENDER_CHOICES= (
+    GENDER_CHOICES = (
         ('male', 'Мужской'),
         ('female', 'Женский'),
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="profile")
     weight = models.FloatField(blank=True, null=True)
     height = models.FloatField(blank=True, null=True)
     biceps = models.FloatField(blank=True, null=True)
     triceps = models.FloatField(blank=True, null=True)
     chest = models.FloatField(blank=True, null=True)
     guts = models.FloatField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to='profile_pics/', blank=True, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     date_of_birth = models.DateField(blank=True, null=True)
-    user_type = models.CharField(max_length=10, choices=[('Trainer', 'Trainer'), ('Member', 'Member')])
-
+    user_type = models.CharField(max_length=10, choices=[
+                                 ('Trainer', 'Trainer'), ('Member', 'Member')])
 
     def __str__(self):
         return self.user.phone_number
