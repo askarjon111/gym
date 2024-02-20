@@ -34,7 +34,7 @@ class PlansView(View):
     def get(self, request):
         gym = self.request.user.gym
         if gym:
-            plans = gym.plans
+            plans = gym.plans.order_by('-is_active')
         return render(request, self.template_name, {'plans': plans, 'form': AddNewPlanForm})
 
 
@@ -68,7 +68,7 @@ class AddSubscriptionView(View):
         return redirect('user-details', form.data['member'])
 
 
-class DeletePlanView(View):
+class ArchivePlanView(View):
     template_name = 'plans.html'
 
     def get(self, request, plan_id):
@@ -77,5 +77,6 @@ class DeletePlanView(View):
 
     def post(self, request, pk):
         plan = get_object_or_404(Plan, id=pk)
-        plan.delete()
+        plan.is_active = False
+        plan.save()
         return redirect('plans')

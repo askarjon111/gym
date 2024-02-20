@@ -11,6 +11,7 @@ from apps.controls.models import Gym
 class Plan(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField()
+    is_active = models.BooleanField(default=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     sessions = models.SmallIntegerField(default=0)
     days = models.SmallIntegerField(default=1)

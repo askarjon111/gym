@@ -1,8 +1,6 @@
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password
 
-from apps.controls.models import Gym
-
 
 class UserManager(BaseUserManager):
 

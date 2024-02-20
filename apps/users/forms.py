@@ -3,7 +3,6 @@ from django import forms
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from apps.controls.models import Gym
 
 from apps.gym.models import GymSession, Plan
 from .models import User, UserProfile
@@ -16,7 +15,7 @@ class UserCreateForm(forms.ModelForm):
                                     label="Имя")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
                                     label="Фамилия")
-    plan = forms.ModelChoiceField(queryset=Plan.objects.all(), required=True,
+    plan = forms.ModelChoiceField(queryset=Plan.objects.filter(is_active=True), required=True,
                                     widget=forms.Select(attrs={'class': 'form-control'}),
                                     label="План")
     start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
@@ -36,7 +35,7 @@ class UserCreateForm(forms.ModelForm):
 
         if self.request and self.request.user.is_authenticated:
             self.fields['plan'].queryset = Plan.objects.filter(
-                gym=self.request.user.gym)
+                gym=self.request.user.gym, is_active=True)
 
         self.fields['start_date'].initial = date.today()
 
