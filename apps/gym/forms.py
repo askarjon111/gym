@@ -35,7 +35,6 @@ class AddSubscriptionForm(forms.ModelForm):
                 self.request.user.gym.id)
 
             self.fields['start_date'].initial = timezone.now()
-            print(self.fields['start_date'].initial)
             thirty_days_later = timezone.now() + timedelta(days=31)
             self.fields['end_date'].initial = thirty_days_later
 
