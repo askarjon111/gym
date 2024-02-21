@@ -29,8 +29,11 @@ class CreateUser(View):
     def post(self, request):
         form = UserCreateForm(request.POST, request=request)
         if form.is_valid():
+            gym = self.request.user.gym
             instance = form.save()
             user = User.objects.get(phone_number=instance.phone_number)
+            user.gyms.add(gym)
+            user.save()
             plan = Plan.objects.get(id=form.data['plan'])
             subs = Subscription.objects.create(member=user,
                                                plan=plan,
