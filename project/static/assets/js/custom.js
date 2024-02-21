@@ -7,7 +7,7 @@ document.getElementById('id_plan').addEventListener('change', function () {
 
 function updateEndDate(planId) {
     const baseUrl = window.location.host;
-    const apiUrl = 'http://' + baseUrl + `/plans/${planId}/days/`
+    var apiUrl = 'http://' + baseUrl + `/plans/${planId}/days/`
     if (!baseUrl.includes('127.0.0.1')) {
         apiUrl = 'https://' + baseUrl + `/plans/${planId}/days/`
     }
