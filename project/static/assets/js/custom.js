@@ -8,6 +8,10 @@ document.getElementById('id_plan').addEventListener('change', function () {
 function updateEndDate(planId) {
     const baseUrl = window.location.host;
     const apiUrl = 'http://' + baseUrl + `/plans/${planId}/days/`
+    if (!baseUrl.includes('127.0.0.1')) {
+        const apiUrl = 'https://' + baseUrl + `/plans/${planId}/days/`
+    }
+
     const options = {
         method: 'GET',
         headers: {
@@ -23,7 +27,6 @@ function updateEndDate(planId) {
             return response.json();
         })
         .then(data => {
-            var planId = document.getElementById('id_plan').value;
 
             if (data.days !== null) {
                 var startDate = new Date(document.getElementById('id_start_date').value);
