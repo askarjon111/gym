@@ -80,3 +80,15 @@ class ArchivePlanView(View):
         plan.is_active = False
         plan.save()
         return redirect('plans')
+
+
+@api_view(['GET'])
+def get_plan_days(request, plan_id):
+    try:
+        plan = Plan.objects.get(pk=plan_id)
+        days = plan.days
+        return Response({'days': days})
+    except Plan.DoesNotExist:
+        return Response({'error': 'Plan not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)

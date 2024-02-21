@@ -54,16 +54,15 @@
                                 <td>{{ plan.days }} дней</td>
                                 <td>
                                     <span class="badge bg-{% if plan.is_active %}success{% else %}warning{% endif %}">
-                                    {% if plan.is_active %}
+                                        {% if plan.is_active %}
                                         Активный
-                                    {% else %}
+                                        {% else %}
                                         Архив
-                                    {% endif %}
+                                        {% endif %}
                                     </span>
                                 </td>
                                 {% if plan.is_active %}
-                                <td><button class="btn btn-primary btn-sm"
-                                        title="В архив" data-toggle="modal"
+                                <td><button class="btn btn-primary btn-sm" title="В архив" data-toggle="modal"
                                         data-target="#modal-archive-plan-{{ plan.id }}"><i
                                             class="fa-solid fa-box-archive"></i></button></td>
                                 {% endif %}

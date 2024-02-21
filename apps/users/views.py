@@ -81,7 +81,8 @@ class MembersListView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'objects': users,
                                                     'form': form,
                                                     'now': now,
-                                                    'add_subscription_form': AddSubscriptionForm(request=self.request)})
+                                                    'add_subscription_form': \
+                                                        AddSubscriptionForm(request=self.request)})
 
     def post(self, request, *args, **kwargs):
         form = AttendanceForm(request.POST, request=request)
