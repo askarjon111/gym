@@ -121,7 +121,7 @@
                                         {% endfor %}
                                     {% endif %}
                                 {% else %}
-                                <h4 class="text-center">У пользователя нет абонемента</h4>
+                                    <h4 class="text-center">У пользователя нет абонемента</h4>
                                 {% endif %}
                             </div>
                             <div class="tab-pane" id="timeline">
@@ -138,7 +138,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for sub in user.subscription_set.all|dictsortreversed:'start_date' %}
+                                                {% for sub in user.subscription_set.all|dictsortreversed:'id' %}
                                                 <tr>
                                                     <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>
@@ -146,6 +146,11 @@
                                                     <td>{{ sub.start_date|date:'d.m.Y' }}</td>
                                                     <td>{{ sub.end_date|date:'d.m.Y' }}</td>
                                                     <td><span class="badge bg-{% if sub.status == 'active' %}success{% elif sub.status == 'inactive' %}danger{% endif %}">{{ sub.get_status_display }}</span></td></td>
+                                                    <td>
+                                                        <button title="Отменить подписку" value="{{ sub.id }}" class="cancel-subscription btn btn-danger btn-sm {% if sub.status == 'inactive' %}disabled{% endif %}">
+                                                        <i class="fas fa-cancel"></i>
+                                                    </button>
+                                                    </td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>

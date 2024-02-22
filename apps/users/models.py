@@ -60,6 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         subscription = Subscription.objects.filter(
             member=self, status=STATUS_CHOICES[0][0]).last()
         if subscription:
+            print(self.id, subscription)
             return subscription
 
     @property

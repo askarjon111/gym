@@ -88,7 +88,7 @@ class GymSession(BaseModel):
             raise ValueError(
                 "Member does not have a valid ongoing subscription plan.")
 
-        if self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
+        if self.subscription.plan.sessions != 0 and self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
             self.subscription.status = STATUS_CHOICES[1][0]
             self.subscription.save()
 

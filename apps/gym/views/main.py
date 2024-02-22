@@ -82,6 +82,7 @@ class ArchivePlanView(View):
         return redirect('plans')
 
 
+@gym_manager_required(login_url='login')
 @api_view(['GET'])
 def get_plan_days(request, plan_id):
     try:
@@ -90,5 +91,19 @@ def get_plan_days(request, plan_id):
         return Response({'days': days})
     except Plan.DoesNotExist:
         return Response({'error': 'Plan not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+# @gym_manager_required(login_url='login')
+@api_view(['POST'])
+def cancel_subscription(request, sub_id):
+    try:
+        subscription = Subscription.objects.get(pk=sub_id)
+        subscription.status = STATUS_CHOICES[1][0]
+        subscription.save()
+        return Response({'status': 'ok'}, status=200)
+    except Subscription.DoesNotExist:
+        return Response({'error': 'Subscription not found'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
