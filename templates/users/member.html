@@ -159,18 +159,10 @@
                                     <!-- /.card-body -->
                             </div>
                             <div class="tab-pane" id="edit">
-                                <form action="user-update" class="row g-3" method="post" enctype="multipart/form-data">
-                                    <!-- {% csrf_token %}
-                                    {% for field in form %}
-                                    <div class="col-lg-6">
-                                        {{ field.label }}
-                                        {{ field }}
-                                        {{ field.error }}
-                                    </div>
-                                    {% endfor %}
-                                    <div class="col-12 d-flex justify-content-end">
-                                        <button class="btn btn-primary" type="submit">Saqlash</button>
-                                    </div> -->
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button method="post" class="btn btn-success float-right" type="submit">Сохранять</button>
                                 </form>
                             </div>
                         </div>

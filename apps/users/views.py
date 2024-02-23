@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import View
 from django.utils import timezone
@@ -149,25 +149,60 @@ class StaffListView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'members': User.objects.all().order_by('-id'), 'form': form})
 
 
-
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
-class UserDetail(LoginRequiredMixin, DetailView):
+class UserDetail(LoginRequiredMixin, View):
     login_url = 'login'
-    model = User
-    template_name = 'users/member.html'
+    
+    def get(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        attended_sessions = []
+        list_count = 0
+        
+        if user.subscription:
+            attended_sessions = GymSession.objects.filter(
+                member=user, subscription=user.subscription)
+            list_count = user.plan.sessions - attended_sessions.count()
+            list_count = 0 if list_count < 0 else list_count
+        
+        add_subscription_form = AddSubscriptionForm(request=self.request)
+        
+        context = {
+            'user': user,
+            'attended_sessions': attended_sessions,
+            'list_count': list_count,
+            'add_subscription_form': add_subscription_form,
+            'now': timezone.now(),
+            'form': UserUpdateForm(instance=user)
+        }
+        
+        return render(request, 'users/member.html', context)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if kwargs['object'].subscription:
-            context['attended_sessions'] = GymSession.objects.filter(
-                member=kwargs['object'], subscription=kwargs['object'].subscription)
-            context['list'] = kwargs['object'].plan.sessions - \
-                context['attended_sessions'].count()
-            context['list'] = 0 if context['list'] < 0 else context['list']
-        context['add_subscription_form'] = AddSubscriptionForm(
-            request=self.request)
-        context['now'] = timezone.now()
-        return context
+
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        form = UserUpdateForm(request.POST, instance=user)
+        
+        if form.is_valid():
+            form.save()
+            print('saved')
+            return redirect('user-details', pk=pk)
+        print(form.errors)
+        attended_sessions = GymSession.objects.filter(
+            member=user, subscription=user.subscription)
+        list_count = user.plan.sessions - attended_sessions.count()
+        list_count = 0 if list_count < 0 else list_count
+        
+        add_subscription_form = AddSubscriptionForm(request=self.request)
+        
+        context = {
+            'user': user,
+            'attended_sessions': attended_sessions,
+            'list_count': list_count,
+            'add_subscription_form': add_subscription_form,
+            'now': timezone.now(),
+            'form': form
+        }
+        return render(request, 'users/member.html', context)
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
