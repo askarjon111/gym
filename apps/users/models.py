@@ -83,6 +83,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     def left_sessions(self):
         from apps.gym.models import GymSession
         if self.plan:
+            if self.plan.sessions == 0:
+                return 0
             from apps.gym.models import Subscription
             all_sessions = self.plan.sessions
             subscription = Subscription.objects.filter(member=self).last()

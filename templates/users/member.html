@@ -77,6 +77,7 @@
                     </div>
                 </div>
 
+
                 <div class="card-primary">
                     <div class="info-box bg-{% if user.subscription %}success{% else %}warning{% endif %}">
                         <span class="info-box-icon"><i class="fa-regular fa-circle-check"></i></span>
@@ -88,7 +89,13 @@
                                 <div class="progress-bar" style="width: {{ user.subscription.attendance_percentage }}%"></div>
                             </div>
                             <span class="progress-description">
-                                Осталось {{ user.left_sessions }} сеансов
+                                Осталось 
+                                {% if user.plan.sessions == 0 %}
+                                ∞
+                                {% else %}
+                                {{ user.left_sessions }}
+                                {% endif %}
+                                сеансов
                             </span>
                         </div>
                     </div>
@@ -110,7 +117,7 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="activity">
-                                {% if object.subscription %}
+                                {% if user.subscription %}
                                     {% for session in attended_sessions %}
                                         <button class="attendance-button-active" title="{{ session.start }}">
                                         </button>
@@ -142,7 +149,14 @@
                                                 <tr>
                                                     <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>
-                                                    <td>{{ sub.used_sessions }}/{{ sub.plan.sessions }}</td>
+                                                    <td>
+                                                        {{ sub.used_sessions }}
+                                                        /{% if sub.plan.sessions == 0 %}
+                                                        ∞
+                                                        {% else %}
+                                                        {{ sub.plan.sessions }}
+                                                        {% endif %}
+                                                    </td>
                                                     <td>{{ sub.start_date|date:'d.m.Y' }}</td>
                                                     <td>{{ sub.end_date|date:'d.m.Y' }}</td>
                                                     <td><span class="badge bg-{% if sub.status == 'active' %}success{% elif sub.status == 'inactive' %}danger{% endif %}">{{ sub.get_status_display }}</span></td></td>
