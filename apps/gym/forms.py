@@ -12,7 +12,7 @@ class AddSubscriptionForm(forms.ModelForm):
                                     widget=forms.Select(
                                         attrs={'class': 'form-control'}),
                                     label="Пользователь")
-    plan = forms.ModelChoiceField(queryset=Plan.objects.all(), required=True,
+    plan = forms.ModelChoiceField(queryset=Plan.objects.filter(is_active=True), required=True,
                                   widget=forms.Select(
                                       attrs={'class': 'form-control'}),
                                   label="План")
@@ -30,12 +30,11 @@ class AddSubscriptionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.request and self.request.user.is_authenticated:
             self.fields['plan'].queryset = Plan.objects.filter(
-                gym=self.request.user.gym)
+                gym=self.request.user.gym, is_active=True)
             self.fields['member'].queryset = Gym.objects.get_members(
                 self.request.user.gym.id)
 
             self.fields['start_date'].initial = timezone.now()
-            print(self.fields['start_date'].initial)
             thirty_days_later = timezone.now() + timedelta(days=31)
             self.fields['end_date'].initial = thirty_days_later
 

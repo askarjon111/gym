@@ -34,7 +34,7 @@ class PlansView(View):
     def get(self, request):
         gym = self.request.user.gym
         if gym:
-            plans = gym.plans
+            plans = gym.plans.order_by('-is_active')
         return render(request, self.template_name, {'plans': plans, 'form': AddNewPlanForm})
 
 
@@ -68,7 +68,7 @@ class AddSubscriptionView(View):
         return redirect('user-details', form.data['member'])
 
 
-class DeletePlanView(View):
+class ArchivePlanView(View):
     template_name = 'plans.html'
 
     def get(self, request, plan_id):
@@ -77,5 +77,33 @@ class DeletePlanView(View):
 
     def post(self, request, pk):
         plan = get_object_or_404(Plan, id=pk)
-        plan.delete()
+        plan.is_active = False
+        plan.save()
         return redirect('plans')
+
+
+@gym_manager_required(login_url='login')
+@api_view(['GET'])
+def get_plan_days(request, plan_id):
+    try:
+        plan = Plan.objects.get(pk=plan_id)
+        days = plan.days
+        return Response({'days': days})
+    except Plan.DoesNotExist:
+        return Response({'error': 'Plan not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+# @gym_manager_required(login_url='login')
+@api_view(['POST'])
+def cancel_subscription(request, sub_id):
+    try:
+        subscription = Subscription.objects.get(pk=sub_id)
+        subscription.status = STATUS_CHOICES[1][0]
+        subscription.save()
+        return Response({'status': 'ok'}, status=200)
+    except Subscription.DoesNotExist:
+        return Response({'error': 'Subscription not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)

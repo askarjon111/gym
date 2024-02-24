@@ -77,6 +77,7 @@
                     </div>
                 </div>
 
+
                 <div class="card-primary">
                     <div class="info-box bg-{% if user.subscription %}success{% else %}warning{% endif %}">
                         <span class="info-box-icon"><i class="fa-regular fa-circle-check"></i></span>
@@ -88,7 +89,13 @@
                                 <div class="progress-bar" style="width: {{ user.subscription.attendance_percentage }}%"></div>
                             </div>
                             <span class="progress-description">
-                                Осталось {{ user.left_sessions }} сеансов
+                                Осталось 
+                                {% if user.plan.sessions == 0 %}
+                                ∞
+                                {% else %}
+                                {{ user.left_sessions }}
+                                {% endif %}
+                                сеансов
                             </span>
                         </div>
                     </div>
@@ -110,7 +117,7 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="activity">
-                                {% if object.subscription %}
+                                {% if user.subscription %}
                                     {% for session in attended_sessions %}
                                         <button class="attendance-button-active" title="{{ session.start }}">
                                         </button>
@@ -121,7 +128,7 @@
                                         {% endfor %}
                                     {% endif %}
                                 {% else %}
-                                <h4 class="text-center">У пользователя нет абонемента</h4>
+                                    <h4 class="text-center">У пользователя нет абонемента</h4>
                                 {% endif %}
                             </div>
                             <div class="tab-pane" id="timeline">
@@ -138,14 +145,26 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for sub in user.subscription_set.all|dictsortreversed:'start_date' %}
+                                                {% for sub in user.subscription_set.all|dictsortreversed:'id' %}
                                                 <tr>
                                                     <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>
-                                                    <td>{{ sub.used_sessions }}/{{ sub.plan.sessions }}</td>
+                                                    <td>
+                                                        {{ sub.used_sessions }}
+                                                        /{% if sub.plan.sessions == 0 %}
+                                                        ∞
+                                                        {% else %}
+                                                        {{ sub.plan.sessions }}
+                                                        {% endif %}
+                                                    </td>
                                                     <td>{{ sub.start_date|date:'d.m.Y' }}</td>
                                                     <td>{{ sub.end_date|date:'d.m.Y' }}</td>
                                                     <td><span class="badge bg-{% if sub.status == 'active' %}success{% elif sub.status == 'inactive' %}danger{% endif %}">{{ sub.get_status_display }}</span></td></td>
+                                                    <td>
+                                                        <button title="Отменить подписку" value="{{ sub.id }}" class="cancel-subscription btn btn-danger btn-sm {% if sub.status == 'inactive' %}disabled{% endif %}">
+                                                        <i class="fas fa-cancel"></i>
+                                                    </button>
+                                                    </td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -154,18 +173,10 @@
                                     <!-- /.card-body -->
                             </div>
                             <div class="tab-pane" id="edit">
-                                <form action="user-update" class="row g-3" method="post" enctype="multipart/form-data">
-                                    <!-- {% csrf_token %}
-                                    {% for field in form %}
-                                    <div class="col-lg-6">
-                                        {{ field.label }}
-                                        {{ field }}
-                                        {{ field.error }}
-                                    </div>
-                                    {% endfor %}
-                                    <div class="col-12 d-flex justify-content-end">
-                                        <button class="btn btn-primary" type="submit">Saqlash</button>
-                                    </div> -->
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button method="post" class="btn btn-success float-right" type="submit">Сохранять</button>
                                 </form>
                             </div>
                         </div>
@@ -229,4 +240,5 @@
 </div>
 {% endblock content %}
 {% block script %}
+    <script src="{% static 'assets/js/custom.js' %}"></script>
 {% endblock script %}

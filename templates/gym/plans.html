@@ -52,29 +52,39 @@
                                 <td>{{ plan.price|floatformat:"-2"|default:"0"|intcomma }} сўм</td>
                                 <td>{% if plan.sessions > 0 %}{{ plan.sessions }} {% else %} ∞ {% endif %}</td>
                                 <td>{{ plan.days }} дней</td>
-                                <td><button href="{% url 'delete-plan' plan.id %}" class="btn btn-danger btn-sm"
-                                        title="Удалить план" data-toggle="modal"
-                                        data-target="#modal-delete-plan-{{ plan.id }}"><i
-                                            class="fas fa-trash"></i></button></td>
+                                <td>
+                                    <span class="badge bg-{% if plan.is_active %}success{% else %}warning{% endif %}">
+                                        {% if plan.is_active %}
+                                        Активный
+                                        {% else %}
+                                        Архив
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                {% if plan.is_active %}
+                                <td><button class="btn btn-primary btn-sm" title="В архив" data-toggle="modal"
+                                        data-target="#modal-archive-plan-{{ plan.id }}"><i
+                                            class="fa-solid fa-box-archive"></i></button></td>
+                                {% endif %}
                             </tr>
-                            <div class="modal fade" id="modal-delete-plan-{{ plan.id }}">
+                            <div class="modal fade" id="modal-archive-plan-{{ plan.id }}">
                                 <div class="modal-dialog">
-                                    <div class="modal-content bg-danger">
+                                    <div class="modal-content bg-warning">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Удалить план</h4>
+                                            <h4 class="modal-title">В архив</h4>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Вы уверены, что хотите удалить этот план?</p>
+                                            <p>Вы хотите поместить этот план в архив?</p>
                                         </div>
                                         <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-outline-light"
-                                                data-dismiss="modal">Close</button>
-                                            <form method="post" action="{% url 'delete-plan' plan.id %}">
+                                                data-dismiss="modal">Закрывать</button>
+                                            <form method="post" action="{% url 'archive-plan' plan.id %}">
                                                 {% csrf_token %}
-                                                <button type="submit" class="btn btn-outline-light">Удалить</button>
+                                                <button type="submit" class="btn btn-outline-light">Да</button>
                                             </form>
                                         </div>
                                     </div>

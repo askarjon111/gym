@@ -23,7 +23,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone_number = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
-    roles = models.ManyToManyField(GymRole, related_name='users')
+    roles = models.ManyToManyField(GymRole, related_name='users', blank=True)
     gyms = models.ManyToManyField(Gym, related_name='users')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -83,6 +83,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     def left_sessions(self):
         from apps.gym.models import GymSession
         if self.plan:
+            if self.plan.sessions == 0:
+                return 0
             from apps.gym.models import Subscription
             all_sessions = self.plan.sessions
             subscription = Subscription.objects.filter(member=self).last()

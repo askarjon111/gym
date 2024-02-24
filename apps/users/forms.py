@@ -3,7 +3,6 @@ from django import forms
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from apps.controls.models import Gym
 
 from apps.gym.models import GymSession, Plan
 from .models import User, UserProfile
@@ -11,24 +10,26 @@ from .models import User, UserProfile
 
 class UserCreateForm(forms.ModelForm):
     phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                    label="Номер телефона")
+                                   label="Номер телефона")
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                    label="Имя")
+                                 label="Имя")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                    label="Фамилия")
-    plan = forms.ModelChoiceField(queryset=Plan.objects.all(), required=True,
-                                    widget=forms.Select(attrs={'class': 'form-control'}),
-                                    label="План")
+                                label="Фамилия")
+    plan = forms.ModelChoiceField(queryset=Plan.objects.filter(is_active=True), required=True,
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control'}),
+                                  label="План")
     start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-                                                            'type': 'date',
-                                                            'format': 'dd/mm/yyyy'}), label='Дата начала')
+                                                               'type': 'date',
+                                                               'format': 'dd/mm/yyyy'}), label='Дата начала')
     end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-                                                            'type': 'date',
-                                                            'format': 'dd/mm/yyyy'}), label='Дата окончания')
+                                                             'type': 'date',
+                                                             'format': 'dd/mm/yyyy'}), label='Дата окончания')
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'phone_number', 'plan', 'start_date', 'end_date')
+        fields = ('first_name', 'last_name', 'phone_number',
+                  'plan', 'start_date', 'end_date')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -36,7 +37,7 @@ class UserCreateForm(forms.ModelForm):
 
         if self.request and self.request.user.is_authenticated:
             self.fields['plan'].queryset = Plan.objects.filter(
-                gym=self.request.user.gym)
+                gym=self.request.user.gym, is_active=True)
 
         self.fields['start_date'].initial = date.today()
 
@@ -45,14 +46,33 @@ class UserCreateForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.Form):
-    user_id = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                 label="ID")
-    phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                   label="Номер телефона")
-    first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                 label="Имя")
-    last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                label="Фамилия")
+    phone_number = forms.CharField(max_length=20, widget=forms.TextInput(
+        attrs={'class': 'form-control'}), label="Номер телефона")
+    first_name = forms.CharField(max_length=30, widget=forms.TextInput(
+        attrs={'class': 'form-control'}), label="Имя")
+    last_name = forms.CharField(max_length=30, widget=forms.TextInput(
+        attrs={'class': 'form-control'}), label="Фамилия")
+
+
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop('instance', None)
+        super().__init__(*args, **kwargs)
+
+        if self.instance:
+            self.fields['phone_number'].initial = self.instance.phone_number
+            self.fields['first_name'].initial = self.instance.first_name
+            self.fields['last_name'].initial = self.instance.last_name
+
+
+    def save(self, commit=True):
+        if self.instance:
+            self.instance.phone_number = self.cleaned_data['phone_number']
+            self.instance.first_name = self.cleaned_data['first_name']
+            self.instance.last_name = self.cleaned_data['last_name']
+            if commit:
+                self.instance.save()
+            return self.instance
+        return None
 
 
 class UserProfileCreateForm(forms.ModelForm):

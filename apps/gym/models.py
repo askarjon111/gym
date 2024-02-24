@@ -11,6 +11,7 @@ from apps.controls.models import Gym
 class Plan(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField()
+    is_active = models.BooleanField(default=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     sessions = models.SmallIntegerField(default=0)
     days = models.SmallIntegerField(default=1)
@@ -87,7 +88,7 @@ class GymSession(BaseModel):
             raise ValueError(
                 "Member does not have a valid ongoing subscription plan.")
 
-        if self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
+        if self.subscription.plan.sessions != 0 and self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
             self.subscription.status = STATUS_CHOICES[1][0]
             self.subscription.save()
 
