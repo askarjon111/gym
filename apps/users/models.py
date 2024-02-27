@@ -27,7 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     gyms = models.ManyToManyField(Gym, related_name='users')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    # telegram_id = models.CharField(max_length=20, unique=True)
+    telegram_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'

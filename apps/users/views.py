@@ -10,6 +10,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, FormView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from apps.common.choices import STATUS_CHOICES
 from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
@@ -84,8 +86,8 @@ class MembersListView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'objects': users,
                                                     'form': form,
                                                     'now': now,
-                                                    'add_subscription_form': \
-                                                        AddSubscriptionForm(request=self.request)})
+                                                    'add_subscription_form':
+                                                    AddSubscriptionForm(request=self.request)})
 
     def post(self, request, *args, **kwargs):
         form = AttendanceForm(request.POST, request=request)
@@ -152,20 +154,20 @@ class StaffListView(LoginRequiredMixin, View):
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UserDetail(LoginRequiredMixin, View):
     login_url = 'login'
-    
+
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         attended_sessions = []
         list_count = 0
-        
+
         if user.subscription:
             attended_sessions = GymSession.objects.filter(
                 member=user, subscription=user.subscription)
             list_count = user.plan.sessions - attended_sessions.count()
             list_count = 0 if list_count < 0 else list_count
-        
+
         add_subscription_form = AddSubscriptionForm(request=self.request)
-        
+
         context = {
             'user': user,
             'attended_sessions': attended_sessions,
@@ -174,14 +176,13 @@ class UserDetail(LoginRequiredMixin, View):
             'now': timezone.now(),
             'form': UserUpdateForm(instance=user)
         }
-        
-        return render(request, 'users/member.html', context)
 
+        return render(request, 'users/member.html', context)
 
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
         form = UserUpdateForm(request.POST, instance=user)
-        
+
         if form.is_valid():
             form.save()
             print('saved')
@@ -191,9 +192,9 @@ class UserDetail(LoginRequiredMixin, View):
             member=user, subscription=user.subscription)
         list_count = user.plan.sessions - attended_sessions.count()
         list_count = 0 if list_count < 0 else list_count
-        
+
         add_subscription_form = AddSubscriptionForm(request=self.request)
-        
+
         context = {
             'user': user,
             'attended_sessions': attended_sessions,
@@ -270,3 +271,12 @@ class UserRegistrationView(View):
             form.save()
             return redirect('login')
         return render(request, self.template_name, {'form': form})
+
+
+@api_view(['GET'])
+def is_user_registered(request, tg_id):
+    try:
+        user = User.objects.get(telegram_id=tg_id)
+        return Response({"user": user.first_name}, status=200)
+    except User.DoesNotExist:
+        return Response({"user": "not found"}, status=404)

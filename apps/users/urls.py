@@ -1,6 +1,7 @@
 from django.urls import path
 from apps.users.views import (CreateUser, MembersListView, UserDetail,
-                              UserRegistrationView, login_view, LogOutView, UserUpdateView, StaffListView)
+                              UserRegistrationView, login_view, LogOutView,
+                              UserUpdateView, StaffListView, is_user_registered)
 
 
 urlpatterns = [
@@ -12,4 +13,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', LogOutView.as_view(), name='logout'),
     path('register/', UserRegistrationView.as_view(), name='register'),
+
+    # Telegram apis
+    path('telegram/<int:tg_id>/', is_user_registered, name='user-registered'),
 ]
