@@ -226,11 +226,11 @@ class UserUpdateView(LoginRequiredMixin, FormView):
         user.phone_number = form.cleaned_data['phone_number']
         try:
             user.save()
-            return redirect('home')
+            return redirect('dashboard')
         except Exception as e:
             print(f"{e}")
             messages.add_message(self.request, messages.WARNING,
-                                 "Xato")
+                                 "Xatolik")
             return redirect('user-details', form.cleaned_data['user_id'])
 
 
@@ -239,7 +239,7 @@ def login_view(request):
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('home')
+            return redirect('dashboard')
         else:
             print(form.errors)
     else:
@@ -280,3 +280,24 @@ def is_user_registered(request, tg_id):
         return Response({"user": user.first_name}, status=200)
     except User.DoesNotExist:
         return Response({"user": "not found"}, status=404)
+
+
+@api_view(['POST'])
+def register_new_user(request):
+    data = request.data
+    status = 400
+    user, created = User.objects.get_or_create(
+    phone_number=data['phone_number'],
+    defaults={
+        'first_name': data['first_name'],
+        'last_name': data['last_name'],
+    }
+)
+
+    if created:
+        msg, status = "Поздравляем, теперь вы один из нас!", 200
+    else:
+        user.telegram_id = data['telegram_id']
+        user.save()
+        msg, status = "Вы уже зарегистрированы!", 200
+    return Response({"msg": msg}, status=status)

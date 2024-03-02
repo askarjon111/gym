@@ -103,3 +103,10 @@ class QRCode(BaseModel):
     image = models.ImageField(upload_to=f'qr_codes/')
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
     is_printed = models.BooleanField(default=False)
+
+
+class GymProgram(BaseModel):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    is_public = models.BooleanField(default=True)

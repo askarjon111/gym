@@ -1,8 +1,10 @@
 from django.contrib import admin
-from apps.gym.models import GymSession, Plan, Subscription, QRCode
+from apps.gym.models import GymProgram, GymSession, Plan, Subscription, QRCode
 
 
 admin.site.register(Plan)
+admin.site.register(GymProgram)
+
 
 @admin.register(GymSession)
 class GymSessionAdmin(admin.ModelAdmin):

@@ -22,12 +22,15 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     # swagger
-    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0),
+         name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger',
+         cache_timeout=0), name='schema-swagger-ui'),
 
     # admin
     path('admin/', admin.site.urls),
     path('users/', include('apps.users.urls')),
-    path('', include('apps.gym.urls')),
+    path('dashboard/', include('apps.gym.urls')),
+    path('', include('apps.websites.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,7 +5,7 @@ from .views.main import home, PlansView, AddSubscriptionView, \
 from .views.statistics import statistics
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', home, name='dashboard'),
     path('add-subscription/', AddSubscriptionView.as_view(),
          name='add-subscription'),
     path('subscriptions/<int:sub_id>/cancel/',
