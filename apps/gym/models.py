@@ -4,6 +4,7 @@ from django.db import models
 from apps.common.choices import STATUS_CHOICES
 
 from apps.common.models import BaseModel
+from apps.common.tasks import send_message
 from apps.users.models import User
 from apps.controls.models import Gym
 
@@ -88,7 +89,11 @@ class GymSession(BaseModel):
             raise ValueError(
                 "Member does not have a valid ongoing subscription plan.")
 
-        if self.subscription.plan.sessions != 0 and self.subscription.plan.sessions - self.subscription.gymsession_set.all().count() <= 1:
+        send_message.delay(f"🟢 Вход:\n{self.start.strftime('%d-%m-%Y, %H:%M')}", [self.member.telegram_id, ],
+                           self.member.gym.telegram_bot_token)
+
+        if self.subscription.plan.sessions != 0 and self.subscription.plan.sessions \
+                - self.subscription.gymsession_set.all().count() <= 1:
             self.subscription.status = STATUS_CHOICES[1][0]
             self.subscription.save()
 

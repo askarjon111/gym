@@ -27,3 +27,6 @@ tzdata==2023.3
 uritemplate==4.1.1
 urllib3==2.0.5
 gunicorn
+celery==5.3.6
+pyTelegramBotAPI==4.16.1
+redis==5.0.2

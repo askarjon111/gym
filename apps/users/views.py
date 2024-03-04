@@ -293,10 +293,15 @@ def register_new_user(request):
         defaults={
             'first_name': data['first_name'],
             'last_name': data['last_name'],
+            'telegram_id': data['telegram_id'],
         }
     )
 
     if created:
+        gym = Gym.objects.filter(telegram_bot_token=data['token']).first()
+        print(gym)
+        user.gyms.add(gym)
+        user.save()
         msg, status = "Поздравляем, теперь вы один из нас!", 200
     else:
         user.telegram_id = data['telegram_id']

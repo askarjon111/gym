@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'django_filters',
     'ckeditor',
     'debug_toolbar',
-    
+
     # local apps
     'apps.common',
     'apps.users',
@@ -121,6 +121,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Asia/Tashkent'
+CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379"
 
 USE_I18N = True
 
@@ -161,29 +163,29 @@ SWAGGER_SETTINGS = {
     'api_version': '1',
     'SHOW_REQUEST_HEADERS': True,
     'SECURITY_DEFINITIONS': {
-            'Bearer': {
-                'type': 'apiKey',
-                'name': 'Authorization',
-                'in': 'header',
-            },
-            'basic': {
-                'type': 'basic'
-            }
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
         },
+        'basic': {
+            'type': 'basic'
+        }
+    },
     'SUPPORTED_SUBMIT_METHODS': [
-            'get',
-            'post',
-            'put',
-            'patch'
-            'delete',
-        ],
+        'get',
+        'post',
+        'put',
+        'patch'
+        'delete',
+    ],
 }
 
 auth_list = [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    'rest_framework.authentication.BasicAuthentication',
+    'rest_framework.authentication.SessionAuthentication',
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+]
 if not DEBUG:
     auth_list = [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
