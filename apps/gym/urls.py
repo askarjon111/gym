@@ -8,6 +8,8 @@ urlpatterns = [
     path('', home, name='dashboard'),
     path('add-subscription/', AddSubscriptionView.as_view(),
          name='add-subscription'),
+    path('add-subscription/<int:pk>/', AddSubscriptionView.as_view(),
+         name='add-subscription-registration'),
     path('subscriptions/<int:sub_id>/cancel/',
          cancel_subscription, name='cancel-subscription'),
     path('add-plan/', AddNewPlanView.as_view(), name='add-plan'),

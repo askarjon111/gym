@@ -38,20 +38,17 @@ class CreateUser(View):
             user = User.objects.get(phone_number=instance.phone_number)
             user.gyms.add(gym)
             user.save()
-            plan = Plan.objects.get(id=form.data['plan'])
-            subs = Subscription.objects.create(member=user,
-                                               plan=plan,
-                                               start_date=form.data['start_date'],
-                                               end_date=form.data['end_date'],
-                                               status=STATUS_CHOICES[0][0])
 
         else:
             print(form.errors)
             return redirect('add-user')
-        return redirect('users')
+        return redirect('add-subscription-registration', user.id)
 
     def get(self, request):
-        return render(request, self.template_name, {'form': UserCreateForm(request=request)})
+        return render(request, self.template_name,
+                      {'form': UserCreateForm(request=request),
+                       'page_title': 'Персональная информация',
+                       'next_step': 'Следующий'})
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')

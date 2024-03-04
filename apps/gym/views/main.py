@@ -68,6 +68,15 @@ class AddSubscriptionView(View):
         return redirect('user-details', form.data['member'])
 
 
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        return render(request, 'users/add_subscription.html',
+                      {'user': user,
+                       'form': AddSubscriptionForm(request=request),
+                       'page_title': 'Абонемент',
+                       'next_step': 'Сохранить'})
+
+
 class ArchivePlanView(View):
     template_name = 'plans.html'
 

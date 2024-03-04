@@ -15,34 +15,24 @@ class UserCreateForm(forms.ModelForm):
                                  label="Имя")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
                                 label="Фамилия")
-    plan = forms.ModelChoiceField(queryset=Plan.objects.filter(is_active=True), required=True,
-                                  widget=forms.Select(
-                                      attrs={'class': 'form-control'}),
-                                  label="План")
-    start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-                                                               'type': 'date',
-                                                               'format': 'dd/mm/yyyy'}), label='Дата начала')
-    end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-                                                             'type': 'date',
-                                                             'format': 'dd/mm/yyyy'}), label='Дата окончания')
+    # plan = forms.ModelChoiceField(queryset=Plan.objects.filter(is_active=True), required=True,
+    #                               widget=forms.Select(
+    #                                   attrs={'class': 'form-control'}),
+    #                               label="План")
+    # start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
+    #                                                            'type': 'date',
+    #                                                            'format': 'dd/mm/yyyy'}), label='Дата начала')
+    # end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
+    #                                                          'type': 'date',
+    #                                                          'format': 'dd/mm/yyyy'}), label='Дата окончания')
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'phone_number',
-                  'plan', 'start_date', 'end_date')
+        fields = ('first_name', 'last_name', 'phone_number')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-
-        if self.request and self.request.user.is_authenticated:
-            self.fields['plan'].queryset = Plan.objects.filter(
-                gym=self.request.user.gym, is_active=True)
-
-        self.fields['start_date'].initial = date.today()
-
-        thirty_days_later = date.today() + timedelta(days=30)
-        self.fields['end_date'].initial = thirty_days_later
 
 
 class UserUpdateForm(forms.Form):
