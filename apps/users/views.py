@@ -38,9 +38,10 @@ class CreateUser(View):
             user = User.objects.get(phone_number=instance.phone_number)
             user.gyms.add(gym)
             user.save()
-
         else:
-            print(form.errors)
+            for error in form.errors:
+                messages.add_message(self.request, messages.WARNING,
+                                    f"Ошибка: {error}")
             return redirect('add-user')
         return redirect('add-subscription-registration', user.id)
 

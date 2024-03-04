@@ -153,6 +153,13 @@
     <script src="{% static 'assets/js/adminlte.min.js' %}"></script>
     <script src="{% static 'assets/js/demo.js' %}"></script>
     <script src="{% static 'assets/toastr/toastr.min.js' %}"></script>
+    {% if messages %}
+            {% for message in messages %}
+                <script>
+                    toastr.error("{{ message }}")
+                </script>
+            {% endfor %}
+        {% endif %}
     {% block script%}
     {% endblock script %}
 </body>
