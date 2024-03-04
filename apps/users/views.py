@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
@@ -287,12 +289,12 @@ def register_new_user(request):
     data = request.data
     status = 400
     user, created = User.objects.get_or_create(
-    phone_number=data['phone_number'],
-    defaults={
-        'first_name': data['first_name'],
-        'last_name': data['last_name'],
-    }
-)
+        phone_number=data['phone_number'],
+        defaults={
+            'first_name': data['first_name'],
+            'last_name': data['last_name'],
+        }
+    )
 
     if created:
         msg, status = "Поздравляем, теперь вы один из нас!", 200
@@ -301,3 +303,16 @@ def register_new_user(request):
         user.save()
         msg, status = "Вы уже зарегистрированы!", 200
     return Response({"msg": msg}, status=status)
+
+
+@api_view(['GET'])
+def my_subscription(request, tg_id):
+    try:
+        subscription = User.objects.get(telegram_id=tg_id).subscription
+        return Response({"plan": subscription.plan.name,
+                         "start_date": subscription.start_date.strftime("%d-%m-%Y"),
+                         "end_date": subscription.end_date.strftime("%d-%m-%Y"),
+                         "left_sessions": subscription.left_sessions,
+                         "used_sessions": subscription.used_sessions}, status=200)
+    except:
+        return Response({"msg": "Абонемент не найден"}, status=404)

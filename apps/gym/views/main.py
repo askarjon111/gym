@@ -98,6 +98,7 @@ def get_plan_days(request, plan_id):
 # @gym_manager_required(login_url='login')
 @api_view(['POST'])
 def cancel_subscription(request, sub_id):
+    print('test')
     try:
         subscription = Subscription.objects.get(pk=sub_id)
         subscription.status = STATUS_CHOICES[1][0]

@@ -53,7 +53,7 @@ class Subscription(BaseModel):
 
     @property
     def left_sessions(self):
-        return self.plan.sessions - self.used_sessions
+        return self.plan.sessions - self.used_sessions if self.plan.sessions > 0 else "∞"
 
     def __str__(self):
         return f"{self.plan}"

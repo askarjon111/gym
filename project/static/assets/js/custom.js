@@ -7,9 +7,9 @@ document.getElementById('id_plan').addEventListener('change', function () {
 
 function updateEndDate(planId) {
     const baseUrl = window.location.host;
-    var apiUrl = 'http://' + baseUrl + `/plans/${planId}/days/`
+    var apiUrl = 'http://' + baseUrl + `/dashboard/plans/${planId}/days/`
     if (!baseUrl.includes('127.0.0.1')) {
-        apiUrl = 'https://' + baseUrl + `/plans/${planId}/days/`
+        apiUrl = 'https://' + baseUrl + `/dashboard/plans/${planId}/days/`
     }
 
     const options = {
@@ -70,7 +70,7 @@ function cancelSubscription(subId) {
     const csrftoken = getCookie('csrftoken');
 
     const baseUrl = window.location.host;
-    const url = '/subscriptions/' + subId + '/cancel/'
+    const url = '/dashboard/subscriptions/' + subId + '/cancel/'
     var apiUrl = 'http://' + baseUrl + url;
     if (!baseUrl.includes('127.0.0.1')) {
         apiUrl = 'https://' + baseUrl + url;
