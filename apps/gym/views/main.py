@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework.decorators import api_view
@@ -36,6 +37,20 @@ class PlansView(View):
         if gym:
             plans = gym.plans.order_by('-is_active')
         return render(request, self.template_name, {'plans': plans, 'form': AddNewPlanForm})
+
+    def post(self, request, pk):
+        plan = Plan.objects.get(pk=pk)
+        form = AddNewPlanForm(request.POST, instance=plan)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Plan updated successfully!")
+        else:
+            for error in form.errors:
+                messages.add_message(request, messages.WARNING,
+                                    f"Ошибка: {error}")
+
+        return redirect('plans')
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')

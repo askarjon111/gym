@@ -77,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     @property
     def gym(self):
-        return self.roles.last().gym if self.roles.last() else self.gyms.last()
+        return self.gyms.last()
 
     @property
     def left_sessions(self):

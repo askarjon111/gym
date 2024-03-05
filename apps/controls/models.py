@@ -12,7 +12,6 @@ class GymPlan(BaseModel):
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
     members_limit = models.SmallIntegerField(default=0)
-    telegram_token = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.name
