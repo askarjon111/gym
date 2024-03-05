@@ -1,5 +1,5 @@
-from datetime import datetime
 
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
@@ -185,9 +185,11 @@ class UserDetail(LoginRequiredMixin, View):
 
         if form.is_valid():
             form.save()
-            print('saved')
             return redirect('user-details', pk=pk)
-        print(form.errors)
+        else:
+            for error in form.errors:
+                messages.add_message(self.request, messages.WARNING,
+                                    f"Ошибка: {error}")
         attended_sessions = GymSession.objects.filter(
             member=user, subscription=user.subscription)
         list_count = user.plan.sessions - attended_sessions.count()
@@ -205,6 +207,20 @@ class UserDetail(LoginRequiredMixin, View):
         }
         return render(request, 'users/member.html', context)
 
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class UserDelete(View):
+
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+
+        if request.user != user and not request.user.is_gym_manager:
+            raise PermissionDenied
+
+        user.delete()
+        messages.success(request, f"Пользователь { user.first_name } удален!")
+
+        return redirect('users')
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UserUpdateView(LoginRequiredMixin, FormView):

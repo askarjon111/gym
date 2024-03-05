@@ -94,6 +94,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
             return left
         return 0
 
+    @property
+    def is_gym_manager(self):
+        return self.is_authenticated and self.roles.filter(title='manager').exists()
+
     objects = UserManager()
 
 
