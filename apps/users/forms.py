@@ -15,16 +15,6 @@ class UserCreateForm(forms.ModelForm):
                                  label="Имя")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
                                 label="Фамилия")
-    # plan = forms.ModelChoiceField(queryset=Plan.objects.filter(is_active=True), required=True,
-    #                               widget=forms.Select(
-    #                                   attrs={'class': 'form-control'}),
-    #                               label="План")
-    # start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-    #                                                            'type': 'date',
-    #                                                            'format': 'dd/mm/yyyy'}), label='Дата начала')
-    # end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control',
-    #                                                          'type': 'date',
-    #                                                          'format': 'dd/mm/yyyy'}), label='Дата окончания')
 
     class Meta:
         model = User
@@ -42,6 +32,8 @@ class UserUpdateForm(forms.Form):
         attrs={'class': 'form-control'}), label="Имя")
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(
         attrs={'class': 'form-control'}), label="Фамилия")
+    telegram_id = forms.CharField(max_length=30, widget=forms.TextInput(
+        attrs={'class': 'form-control'}), label="Телеграм ID")
 
 
     def __init__(self, *args, **kwargs):
@@ -52,6 +44,7 @@ class UserUpdateForm(forms.Form):
             self.fields['phone_number'].initial = self.instance.phone_number
             self.fields['first_name'].initial = self.instance.first_name
             self.fields['last_name'].initial = self.instance.last_name
+            self.fields['telegram_id'].initial = self.instance.telegram_id
 
 
     def save(self, commit=True):
@@ -59,6 +52,7 @@ class UserUpdateForm(forms.Form):
             self.instance.phone_number = self.cleaned_data['phone_number']
             self.instance.first_name = self.cleaned_data['first_name']
             self.instance.last_name = self.cleaned_data['last_name']
+            self.instance.telegram_id = self.cleaned_data['telegram_id']
             if commit:
                 self.instance.save()
             return self.instance

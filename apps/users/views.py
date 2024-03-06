@@ -41,7 +41,7 @@ class CreateUser(View):
         else:
             for error in form.errors:
                 messages.add_message(self.request, messages.WARNING,
-                                    f"Ошибка: {error}")
+                                     f"Ошибка: {error}")
             return redirect('add-user')
         return redirect('add-subscription-registration', user.id)
 
@@ -180,31 +180,36 @@ class UserDetail(LoginRequiredMixin, View):
         return render(request, 'users/member.html', context)
 
     def post(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        form = UserUpdateForm(request.POST, instance=user)
+        try:
+            user = get_object_or_404(User, pk=pk)
+            form = UserUpdateForm(request.POST, instance=user)
 
-        if form.is_valid():
-            form.save()
-            return redirect('user-details', pk=pk)
-        else:
-            for error in form.errors:
-                messages.add_message(self.request, messages.WARNING,
-                                    f"Ошибка: {error}")
-        attended_sessions = GymSession.objects.filter(
-            member=user, subscription=user.subscription)
-        list_count = user.plan.sessions - attended_sessions.count()
-        list_count = 0 if list_count < 0 else list_count
+            
+            attended_sessions = GymSession.objects.filter(
+                member=user, subscription=user.subscription)
+            list_count = user.plan.sessions - attended_sessions.count()
+            list_count = 0 if list_count < 0 else list_count
 
-        add_subscription_form = AddSubscriptionForm(request=self.request)
+            add_subscription_form = AddSubscriptionForm(request=self.request)
 
-        context = {
-            'user': user,
-            'attended_sessions': attended_sessions,
-            'list_count': list_count,
-            'add_subscription_form': add_subscription_form,
-            'now': timezone.now(),
-            'form': form
-        }
+            context = {
+                'user': user,
+                'attended_sessions': attended_sessions,
+                'list_count': list_count,
+                'add_subscription_form': add_subscription_form,
+                'now': timezone.now(),
+                'form': form
+            }
+            if form.is_valid():
+                form.save()
+                return redirect('user-details', pk=pk)
+            else:
+                for error in form.errors:
+                    messages.add_message(self.request, messages.WARNING,
+                                         f"Ошибка: {error}")
+        except:
+            messages.add_message(self.request, messages.WARNING,
+                                 f"Произошла ошибка, свяжитесь с администратором.")
         return render(request, 'users/member.html', context)
 
 
@@ -221,6 +226,7 @@ class UserDelete(View):
         messages.success(request, f"Пользователь { user.first_name } удален!")
 
         return redirect('users')
+
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UserUpdateView(LoginRequiredMixin, FormView):
