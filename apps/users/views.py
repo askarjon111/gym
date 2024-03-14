@@ -17,6 +17,7 @@ from rest_framework.response import Response
 from apps.common.choices import STATUS_CHOICES
 from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
+from django.core import serializers
 
 from apps.users.models import User
 from apps.gym.models import GymSession, Plan, Subscription
@@ -180,26 +181,24 @@ class UserDetail(LoginRequiredMixin, View):
         return render(request, 'users/member.html', context)
 
     def post(self, request, pk):
-        try:
-            user = get_object_or_404(User, pk=pk)
-            form = UserUpdateForm(request.POST, instance=user)
-
-            
-            attended_sessions = GymSession.objects.filter(
-                member=user, subscription=user.subscription)
+        user = get_object_or_404(User, pk=pk)
+        form = UserUpdateForm(request.POST, instance=user)
+        attended_sessions = GymSession.objects.filter(
+            member=user, subscription=user.subscription)
+        list_count = 0
+        if user.plan:
             list_count = user.plan.sessions - attended_sessions.count()
-            list_count = 0 if list_count < 0 else list_count
-
-            add_subscription_form = AddSubscriptionForm(request=self.request)
-
-            context = {
-                'user': user,
-                'attended_sessions': attended_sessions,
-                'list_count': list_count,
-                'add_subscription_form': add_subscription_form,
-                'now': timezone.now(),
-                'form': form
-            }
+        list_count = 0 if list_count < 0 else list_count
+        add_subscription_form = AddSubscriptionForm(request=self.request)
+        context = {
+            'user': user,
+            'attended_sessions': attended_sessions,
+            'list_count': list_count,
+            'add_subscription_form': add_subscription_form,
+            'now': timezone.now(),
+            'form': form
+        }
+        try:
             if form.is_valid():
                 form.save()
                 return redirect('user-details', pk=pk)
@@ -207,10 +206,11 @@ class UserDetail(LoginRequiredMixin, View):
                 for error in form.errors:
                     messages.add_message(self.request, messages.WARNING,
                                          f"Ошибка: {error}")
+            return render(request, 'users/member.html', context)
         except:
             messages.add_message(self.request, messages.WARNING,
                                  f"Произошла ошибка, свяжитесь с администратором.")
-        return render(request, 'users/member.html', context)
+            return render(request, 'users/member.html', context)
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
@@ -339,5 +339,19 @@ def my_subscription(request, tg_id):
                          "end_date": subscription.end_date.strftime("%d-%m-%Y"),
                          "left_sessions": subscription.left_sessions,
                          "used_sessions": subscription.used_sessions}, status=200)
+    except:
+        return Response({"msg": "Абонемент не найден"}, status=404)
+
+
+@api_view(['GET'])
+def my_sessions(request, tg_id):
+    try:
+        subscription = User.objects.get(telegram_id=tg_id).subscription
+        if subscription:
+            sessions = GymSession.objects.filter(
+                subscription=subscription)[:10]
+            data = serializers.serialize('json', sessions)
+            print(data)
+        return Response({"sessions": data}, status=200)
     except:
         return Response({"msg": "Абонемент не найден"}, status=404)
