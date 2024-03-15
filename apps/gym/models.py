@@ -4,7 +4,7 @@ from django.db import models
 from apps.common.choices import STATUS_CHOICES
 
 from apps.common.models import BaseModel
-from apps.common.tasks import send_message
+from apps.notifications.tasks import send_message
 from apps.users.models import User
 from apps.controls.models import Gym
 

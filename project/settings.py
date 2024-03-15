@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'apps.gym',
     'apps.controls',
     'apps.websites',
+    'apps.notifications',
 ]
 
 MIDDLEWARE = [
@@ -251,3 +252,13 @@ AUTH_USER_MODEL = 'users.User'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+CELERY_BEAT_SCHEDULE = {
+      'send-message-every-30-seconds': {
+        'task': 'apps.notifications.tasks.call_send_message',
+        'schedule': 60.0,
+        'options': {
+            'expires': 15.0,
+        },
+    },
+}

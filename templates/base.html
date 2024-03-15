@@ -126,6 +126,19 @@
                                 <p>Статистика</p>
                             </a>
                         </li>
+                        <li class="nav-header">Маркетинг</li>
+                        <li class="nav-item">
+                            <a href="{% url 'statistics' %}" class="nav-link {% block marketing %}{% endblock %}">
+                                <i class="fa-solid fa-envelope nav-icon"></i>
+                                <p>Уведомления</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'statistics' %}" class="nav-link {% block leads %}{% endblock %}">
+                                <i class="fa-solid fa-users nav-icon"></i>
+                                <p>Лиды</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </nav>
