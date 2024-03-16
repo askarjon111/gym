@@ -121,8 +121,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <form action="{% url 'add-plan' %}" method="post">
                 <div class="modal-body">
-                    <form action="{% url 'add-plan' %}" method="post">
                         {% csrf_token %}
                         {{ form.as_p }}
                 </div>

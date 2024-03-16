@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} - Уведомления {% endblock title %}
+
+{% block notifications %}active{% endblock %}
+{% block open_notifications %}menu-open{% endblock %}
+
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Запланированные сообщения</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">Запланированные сообщения</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card overflow-auto">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <form method="get" class="form-inline ml-auto">
+                                <div class="input-group input-group-sm">
+                                    <input name="q"  value="{{ request.GET.q }}" class="form-control form-control-navbar"
+                                    type="search" placeholder="Поиск" aria-label="Поиск">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-navbar" type="submit">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-6">
+                            <button class="float-right btn btn-primary" title="Добавить новое сообщение" data-toggle="modal"
+                            data-target="#modal-new-notification"><i class="fa-solid fa-plus"></i> Добавить сообщение</button>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="card-body">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Заголовок</th>
+                                <th>Получатель</th>
+                                <th>Текст</th>
+                                <th>Время отправки</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for notification in notifications %}
+                            <tr>
+                                <td>{% if notification.type == 'telegram' %}<i class="fa-brands fa-telegram text-primary"> </i>{% endif %}{{ notification.title }}</td>
+                                <td><p><a class="link-offset-2 link-underline link-underline-opacity-0"
+                                    href="{% url 'user-details' notification.pk %}">{{ notification.receiver }}</a></p></td>
+                                <td>{% if notification.body %}{{ notification.body }}{% else %}Нет{% endif %}</td>
+                                <td>{% if notification.send_at %}{{ notification.send_at }}{% else %}Нет{% endif %}</td>
+                                <td>
+                                    <form class="btn btn-sm" method="post" action="{% url 'users' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="notification" value="{{ notification.id }}">
+                                        <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">
+                                        <button title="Отправить сейчас" class="btn btn-success btn-sm {% if notification.attended %} disabled {% endif %}" type="submit">
+                                            <i class="fa-regular fa-paper-plane"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <div class="modal fade" id="modal-new-notification">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Добавить новое сообщение</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form action="{% url 'notifications' %}" method="post">
+                                            <div class="modal-body">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                                                    {{ form.title }}
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+                                                    {{ form.body }}
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="{{ form.send_at.id_for_label }}">{{ form.send_at.label }}</label>
+                                                    <input type="datetime-local" name="send_at" class="form-control" id="id_send_at">
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="{{ form.type.id_for_label }}">{{ form.type.label }}</label>
+                                                    {{ form.type }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Заголовок</th>
+                                <th>Получатель</th>
+                                <th>Текст</th>
+                                <th>Время отправки</th>
+                                <th>Действие</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            {% include 'blocks/_pagination.html' %}
+        </div>
+    </div>
+</section>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/custom.js' %}"></script>
+{% endblock script %}
