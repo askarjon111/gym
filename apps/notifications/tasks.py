@@ -9,10 +9,10 @@ from apps.notifications.models import Notification
 
 @shared_task()
 def call_send_message():
-    print(timezone.now())
     notifications = Notification.objects.filter(send_at__lte=timezone.now(),
-                                                sent=False)
-    print(notifications)
+                                                sent=False,
+                                                is_draft=False,
+                                                receiver__is_null=False)
     for notification in notifications:
         notification.send()
         notification.sent = True

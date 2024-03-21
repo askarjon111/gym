@@ -106,85 +106,41 @@
         <div class="col-md-9">
             <div class="card card-primary card-outline">
               <div class="card-header">
-                <h3 class="card-title">Inbox</h3>
-  
-                <div class="card-tools">
-                  <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" placeholder="Search Mail">
-                    <div class="input-group-append">
-                      <div class="btn btn-primary">
-                        <i class="fas fa-search"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card-tools -->
+                <h3 class="card-title">Compose New Message</h3>
               </div>
               <!-- /.card-header -->
-              <div class="card-body p-0">
-                <div class="mailbox-controls">
-                  <!-- Check all button -->
-                  <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
-                  </button>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm"><i class="far fa-trash-alt"></i></button>
+              <div class="card-body">
+                <div class="form-group">
+                  <input class="form-control" placeholder="To:">
+                </div>
+                <div class="form-group">
+                  <input class="form-control" placeholder="Заголовок:", value="{{ form.title.initial }}">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" style="height: 300px">
+                      {{ form.body.initial }}
+                    </textarea>
+                </div>
+                <div class="form-group">
+                  <div class="btn btn-default btn-file">
+                    <i class="fas fa-paperclip"></i> Attachment
+                    <input type="file" name="attachment">
                   </div>
+                  <p class="help-block">Max. 32MB</p>
                 </div>
-                <div class="table-responsive mailbox-messages">
-                  <table class="table table-hover table-striped">
-                    <tbody>
-                    {% for notif in objects %}
-                    <tr>
-                      <td>
-                        <div class="icheck-primary">
-                          <input type="checkbox" value="" id="check1">
-                          <label for="check1"></label>
-                        </div>
-                      </td>
-                      <td class="mailbox-star">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0"> #{{ notif.pk }}</a>
-                        {% if notif.type == 'telegram' %}
-                        <i class="fa-brands fa-telegram text-primary"></i>
-                        {% else %}
-                        <i class="fa-solid fa-comment-dots text-warning"></i>
-                        {% endif %}
-                      </td>
-                      <td class="mailbox-subject"><b>{{ notif.title }}</b> | {{ notif.body|truncatewords:5 }}
-                      <td class="mailbox-name">{% if notif.receiver %}<a href="{% url 'user-details' notif.receiver.pk %}" class="link-offset-2 link-underline link-underline-opacity-0">{{ notif.receiver.fullname }}</a>{% else %}Все клиенты{% endif %}</td>
-                      </td>
-                      <td class="mailbox-attachment"></td>
-                      <td class="mailbox-date">{{ notif.send_at }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                  </table>
-                  <!-- /.table -->
-                </div>
-                <!-- /.mail-box-messages -->
               </div>
               <!-- /.card-body -->
-              <div class="card-footer p-0">
-                <div class="mailbox-controls">
-                  <!-- Check all button -->
-                  <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
-                  </button>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm"><i class="far fa-trash-alt"></i></button>
-                    <button type="button" class="btn btn-default btn-sm"><i class="fas fa-reply"></i></button>
-                    <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i></button>
-                  </div>
-                  <!-- /.btn-group -->
-                  <button type="button" class="btn btn-default btn-sm"><i class="fas fa-sync-alt"></i></button>
-                  <div class="float-right">
-                    {% include 'blocks/_pagination.html' %}
-                    <!-- /.btn-group -->
-                  </div>
-                  <!-- /.float-right -->
+              <div class="card-footer">
+                <div class="float-right">
+                  <button type="button" class="btn btn-default"><i class="fas fa-pencil-alt"></i> Draft</button>
+                  <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Send</button>
                 </div>
+                <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Discard</button>
               </div>
+              <!-- /.card-footer -->
             </div>
             <!-- /.card -->
-          </div>
+        </div>
         <div class="col-6">
             {% include 'blocks/_pagination.html' %}
         </div>

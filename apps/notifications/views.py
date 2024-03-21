@@ -56,7 +56,7 @@ class NotificationsListView(LoginRequiredMixin, View):
         except EmptyPage:
             notifications = paginator.page(paginator.num_pages)
         form = NotificationForm(request.POST, request=request)
-        return render(request, self.template_name, {'notifications': notifications, 'form': form})
+        return render(request, self.template_name, {'objects': notifications, 'form': form})
 
     def post(self, request, *args, **kwargs):
         form = NotificationForm(request.POST, request=request)
@@ -68,5 +68,35 @@ class NotificationsListView(LoginRequiredMixin, View):
         else:
             print(form.errors)
             notifications = Notification.objects.filter(gym=request.user.gym)
-            context = {'notifications': notifications, 'form': form}
+            context = {'objects': notifications, 'form': form}
             return render(request, self.template_name, context)
+
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class NotificationDetailView(LoginRequiredMixin, View):
+    template_name = 'notifications/single_notification.html'
+    login_url = 'login'
+
+
+    def get(self, request, pk, *args, **kwargs):
+        gym = self.request.user.gym
+        if gym:
+            notification = Notification.objects.get(pk=pk)
+
+        form = NotificationForm(request.POST, request=request, instance=notification)
+        return render(request, self.template_name, {'notification': notification, 'form': form})
+
+
+    def post(self, request, *args, **kwargs):
+        form = NotificationForm(request.POST, request=request)
+        if form.is_valid():
+            notification = form.save(commit=False)
+            notification.gym = request.user.gym
+            notification.save()
+            return redirect('notifications')
+        else:
+            print(form.errors)
+            notifications = Notification.objects.filter(gym=request.user.gym)
+            context = {'objects': notifications, 'form': form}
+            return render(request, self.template_name, context)
+
