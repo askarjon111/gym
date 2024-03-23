@@ -254,7 +254,7 @@ INTERNAL_IPS = [
 ]
 
 CELERY_BEAT_SCHEDULE = {
-      'send-message-every-30-seconds': {
+      'send-message-every-60-seconds': {
         'task': 'apps.notifications.tasks.call_send_message',
         'schedule': 60.0,
         'options': {

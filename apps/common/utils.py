@@ -9,3 +9,6 @@ def get_uploaded_file_type(file):
 
 def user_upload_path(instance, filename):
     return f"user_{instance.user.id}/{filename}"
+
+def gym_upload_path(instance, filename):
+    return f"{instance.gym.id}/{filename}"

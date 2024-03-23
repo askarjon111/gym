@@ -33,7 +33,7 @@ class UserUpdateForm(forms.Form):
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(
         attrs={'class': 'form-control'}), label="Фамилия")
     telegram_id = forms.CharField(max_length=30, widget=forms.TextInput(
-        attrs={'class': 'form-control'}), label="Телеграм ID")
+        attrs={'class': 'form-control'}), required=False, label="Телеграм ID")
 
 
     def __init__(self, *args, **kwargs):

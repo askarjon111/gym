@@ -33,17 +33,19 @@ class CreateUser(View):
 
     def post(self, request):
         form = UserCreateForm(request.POST, request=request)
-        if form.is_valid():
-            gym = self.request.user.gym
-            instance = form.save()
-            user = User.objects.get(phone_number=instance.phone_number)
-            user.gyms.add(gym)
-            user.save()
-        else:
-            for error in form.errors:
-                messages.add_message(self.request, messages.WARNING,
-                                     f"Ошибка: {error}")
-            return redirect('add-user')
+        gym = self.request.user.gym
+        user = User.objects.filter(phone_number=form.data['phone_number']).first()
+        if not user:
+            if form.is_valid():
+                instance = form.save(commit=False)
+                user = User.objects.get(phone_number=instance.phone_number)
+            else:
+                for error in form.errors:
+                    messages.add_message(self.request, messages.WARNING,
+                                        f"Ошибка: {error}")
+                return redirect('add-user')
+        user.gyms.add(gym)
+        user.save()
         return redirect('add-subscription-registration', user.id)
 
     def get(self, request):
@@ -160,11 +162,14 @@ class UserDetail(LoginRequiredMixin, View):
         user = get_object_or_404(User, pk=pk)
         attended_sessions = []
         list_count = 0
+        gym = self.request.user.gym
+        subscriptions = Subscription.objects.filter(member=user, plan__gym=gym)
+        last_subscription = subscriptions.last()
 
-        if user.subscription:
+        if last_subscription:
             attended_sessions = GymSession.objects.filter(
-                member=user, subscription=user.subscription)
-            list_count = user.plan.sessions - attended_sessions.count()
+                member=user, subscription=last_subscription)
+            list_count = last_subscription.plan.sessions - attended_sessions.count()
             list_count = 0 if list_count < 0 else list_count
 
         add_subscription_form = AddSubscriptionForm(request=self.request)
@@ -175,7 +180,8 @@ class UserDetail(LoginRequiredMixin, View):
             'list_count': list_count,
             'add_subscription_form': add_subscription_form,
             'now': timezone.now(),
-            'form': UserUpdateForm(instance=user)
+            'form': UserUpdateForm(instance=user),
+            'subscriptions': subscriptions
         }
 
         return render(request, 'users/member.html', context)

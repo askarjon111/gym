@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from apps.users.models import User, UserProfile, GymRole
+from apps.users.models import User, UserProfile, GymRole, Access
 from .forms import UserRegistrationForm
 
 
@@ -26,3 +26,4 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(UserProfile)
 admin.site.register(GymRole)
+admin.site.register(Access)

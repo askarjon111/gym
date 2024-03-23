@@ -117,7 +117,7 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="activity">
-                                {% if user.subscription %}
+                                {% if attended_sessions %}
                                     {% for session in attended_sessions %}
                                         <button class="attendance-button-active" title="{{ session.start }}">
                                         </button>
@@ -145,7 +145,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for sub in user.subscription_set.all|dictsortreversed:'id' %}
+                                                {% for sub in subscriptions|dictsortreversed:'id' %}
                                                 <tr>
                                                     <td>{{ sub.id }}. </td>
                                                     <td>{{ sub.plan }}</td>

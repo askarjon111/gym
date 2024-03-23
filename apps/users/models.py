@@ -126,3 +126,15 @@ class UserProfile(BaseModel):
 
     def __str__(self):
         return self.user.phone_number
+
+
+class Access(BaseModel):
+
+    def upload_path(instance, filename):
+        return f"access_qr/{instance.gym.name}/{instance.code}.{filename.split('.')[-1]}"
+
+    code = models.CharField(max_length=7, unique=True)
+    image = models.ImageField(upload_to=upload_path)
+    gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    is_printed = models.BooleanField(default=False)
