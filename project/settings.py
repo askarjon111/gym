@@ -125,6 +125,7 @@ TIME_ZONE = 'Asia/Tashkent'
 CELERY_BROKER_URL = "redis://127.0.0.1:6379"
 CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379"
 
+
 USE_I18N = True
 
 USE_TZ = True
@@ -254,7 +255,7 @@ INTERNAL_IPS = [
 ]
 
 CELERY_BEAT_SCHEDULE = {
-      'send-message-every-60-seconds': {
+    'send-message-every-60-seconds': {
         'task': 'apps.notifications.tasks.call_send_message',
         'schedule': 60.0,
         'options': {

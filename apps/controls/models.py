@@ -18,6 +18,7 @@ class GymPlan(BaseModel):
 
 
 class Gym(BaseModel):
+    code = models.CharField(max_length=3, blank=True, null=True)
     name = models.CharField(max_length=255)
     gym_plan = models.ForeignKey(
         GymPlan, on_delete=models.SET_NULL, blank=True, null=True)

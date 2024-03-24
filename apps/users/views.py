@@ -23,6 +23,7 @@ from apps.users.models import User
 from apps.gym.models import GymSession, Plan, Subscription
 from apps.users.forms import AttendanceForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
 from apps.users.permissions import gym_manager_required
+from apps.users.tasks import generate_and_save_access
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
@@ -37,7 +38,7 @@ class CreateUser(View):
         user = User.objects.filter(phone_number=form.data['phone_number']).first()
         if not user:
             if form.is_valid():
-                instance = form.save(commit=False)
+                instance = form.save()
                 user = User.objects.get(phone_number=instance.phone_number)
             else:
                 for error in form.errors:
@@ -46,6 +47,7 @@ class CreateUser(View):
                 return redirect('add-user')
         user.gyms.add(gym)
         user.save()
+        generate_and_save_access.delay(user.id)
         return redirect('add-subscription-registration', user.id)
 
     def get(self, request):

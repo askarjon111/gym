@@ -42,6 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         self.phone_number = self.phone_number.replace("+", "")
 
         super().save(*args, **kwargs)
+        
 
     def __str__(self):
         return self.phone_number
