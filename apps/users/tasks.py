@@ -1,3 +1,4 @@
+import os
 import qrcode
 import random
 from django.utils import timezone
@@ -22,6 +23,8 @@ def generate_and_save_access(user_id):
     qr.make(fit=True)
 
     qr_code_name = f"media/access_qr/{user.gym.name}/{code}.png"
+    if not os.path.exists(qr_code_name):
+        os.makedirs(qr_code_name)
     img = qr.make_image(fill_color="white", back_color="black")
     img.save(qr_code_name)
     access = Access.objects.create(

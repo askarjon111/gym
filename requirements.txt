@@ -30,3 +30,4 @@ gunicorn
 celery==5.3.6
 pyTelegramBotAPI==4.16.1
 redis==5.0.2
+qrcode==7.4.2
