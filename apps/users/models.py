@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         self.phone_number = self.phone_number.replace("+", "")
 
         super().save(*args, **kwargs)
-        
+
 
     def __str__(self):
         return self.phone_number
@@ -139,3 +139,6 @@ class Access(BaseModel):
     gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     is_printed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.code

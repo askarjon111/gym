@@ -10,8 +10,10 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['phone_number', 'first_name', 'last_name', 'is_staff']
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'telegram_id')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'roles', 'gyms')}),
+        ('Personal Info', {
+         'fields': ('first_name', 'last_name', 'telegram_id')}),
+        ('Permissions', {'fields': ('is_active',
+         'is_staff', 'is_superuser', 'roles', 'gyms')}),
     )
     add_fieldsets = (
         (None, {
@@ -26,4 +28,11 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(UserProfile)
 admin.site.register(GymRole)
-admin.site.register(Access)
+
+
+class AccessAdmin(admin.ModelAdmin):
+    model = Access
+    list_display = ['code', 'user', 'gym']
+
+
+admin.site.register(Access, AccessAdmin)

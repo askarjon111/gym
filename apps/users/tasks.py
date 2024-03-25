@@ -21,7 +21,7 @@ def generate_and_save_access(user_id):
     )
     qr.add_data({"access_code": code})
     qr.make(fit=True)
-    qr_dir = f"media/access_qr/{user.gym.name}/"
+    qr_dir = f"temp_access_qr/{user.gym.name}/"
     if not os.path.exists(qr_dir):
         os.makedirs(qr_dir)
     qr_code_name = f"{qr_dir}{code}.png"
@@ -29,5 +29,5 @@ def generate_and_save_access(user_id):
     img.save(qr_code_name)
     access = Access.objects.create(
         code=code, gym=user.gym, user=user, image=File(open(qr_code_name, 'rb')))
-    print(access)
     access.save()
+    os.remove(qr_code_name)
