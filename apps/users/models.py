@@ -142,3 +142,18 @@ class Access(BaseModel):
 
     def __str__(self):
         return self.code
+
+
+class Lead(BaseModel):
+    STATUS_CHOICES = (
+        ('new', 'Новый'),
+        ('waiting', 'В ожидании'),
+        ('confirmed', 'Подтвержденный'),
+        ('cancelled', 'Отменено'),
+    )
+    phone_number = models.CharField(max_length=255, unique=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+    operator = models.ForeignKey(User, )

@@ -5,7 +5,7 @@ from django.utils import timezone
 from apps.common.choices import STATUS_CHOICES
 
 from apps.controls.models import Gym, GymPlan
-from apps.gym.models import Plan, Subscription, GymSession, QRCode
+from apps.gym.models import Plan, Subscription, GymSession
 from apps.users.models import User, GymRole, UserProfile
 
 
