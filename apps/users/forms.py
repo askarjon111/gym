@@ -1,11 +1,10 @@
-from datetime import date, timedelta
 from django import forms
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 
-from apps.gym.models import GymSession, Plan
-from .models import User, UserProfile
+from apps.gym.models import GymSession
+from .models import Lead, User, UserProfile
 
 
 class UserCreateForm(forms.ModelForm):
@@ -134,3 +133,17 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ['phone_number', 'first_name',
                   'last_name', 'password1', 'password2']
+
+
+
+class LeadForm(forms.ModelForm):
+  class Meta:
+    model = Lead
+    fields = ['phone_number', 'first_name', 'last_name', 'comments', 'status']
+
+  def clean_phone_number(self):
+    # Optional phone number validation logic
+    phone_number = self.cleaned_data['phone_number']
+    # Add your phone number validation here (e.g., length, format)
+    return phone_number
+

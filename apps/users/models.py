@@ -156,4 +156,8 @@ class Lead(BaseModel):
     last_name = models.CharField(max_length=255, null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
-    operator = models.ForeignKey(User, )
+    operator = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = '-id', '-updated_at',
+        

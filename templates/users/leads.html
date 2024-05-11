@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} - Клиенты {% endblock title %}
+
+{% block leads %}active{% endblock %}
+{% block open_leads %}menu-open{% endblock %}
+
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Все клиенты</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">Все клиенты</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card overflow-auto">
+                <div class="card-header">
+                    <form method="get" class="form-inline ml-auto">
+                        <div class="input-group input-group-sm">
+                            <input name="q"  value="{{ request.GET.q }}" class="form-control form-control-navbar"
+                            type="search" placeholder="Поиск" aria-label="Поиск">
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div >
+                    <button href="#" class="btn btn-primary btn-sm" title="Добавить лиды" data-toggle="modal"
+                                            data-target="#add-lead"><i class="fas fa-plus"></i></button>
+                </div>
+                <div class="card-body">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Имя Фамилия</th>
+                                <th>Номер телефона</th>
+                                <th>План</th>
+                                <th>Статус подписки</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for member in leads %}
+                            <tr>
+                                <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'user-details' member.pk %}">{{ member.fullname }}</a></p></td>
+                                <td>{{ member.phone_number }}</td>
+                                <td>{% if member.subscription %}{{ member.plan }}{% else %}Нет{% endif %}</td>
+                                <td>{% if member.subscription %}{{ member.subscription.get_status_display }}{% else %}Нет{% endif %}</td>
+                                <td>
+                                    
+                                    <form class="btn btn-sm" method="post" action="{% url 'users' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="member" value="{{ member.id }}">
+                                        <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">
+                                        <button title="Пришел" class="btn btn-success btn-sm {% if member.attended %} disabled {% endif %}" type="submit">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                    
+                                </td>
+                            </tr>
+                            
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Имя Фамилия</th>
+                                <th>Номер телефона</th>
+                                <th>План</th>
+                                <th>Окончание подписки</th>
+                                <th>Действие</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="add-lead">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Добавить подписку</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'leads' %}" method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <input type="submit" value="Saqlash">
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <div class="col-6">
+            {% include 'blocks/_pagination.html' %}
+        </div>
+    </div>
+</section>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/custom.js' %}"></script>
+{% endblock script %}

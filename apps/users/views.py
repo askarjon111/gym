@@ -19,9 +19,9 @@ from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
 from django.core import serializers
 
-from apps.users.models import User
+from apps.users.models import Lead, User
 from apps.gym.models import GymSession, Plan, Subscription
-from apps.users.forms import AttendanceForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
+from apps.users.forms import AttendanceForm, LeadForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
 from apps.users.permissions import gym_manager_required
 from apps.users.tasks import generate_and_save_access
 
@@ -35,7 +35,8 @@ class CreateUser(View):
     def post(self, request):
         form = UserCreateForm(request.POST, request=request)
         gym = self.request.user.gym
-        user = User.objects.filter(phone_number=form.data['phone_number']).first()
+        user = User.objects.filter(
+            phone_number=form.data['phone_number']).first()
         if not user:
             if form.is_valid():
                 instance = form.save()
@@ -43,7 +44,7 @@ class CreateUser(View):
             else:
                 for error in form.errors:
                     messages.add_message(self.request, messages.WARNING,
-                                        f"Ошибка: {error}")
+                                         f"Ошибка: {error}")
                 return redirect('add-user')
         user.gyms.add(gym)
         user.save()
@@ -363,3 +364,42 @@ def my_sessions(request, tg_id):
         return Response({"sessions": data}, status=200)
     except:
         return Response({"msg": "Абонемент не найден"}, status=404)
+
+
+@gym_manager_required(login_url='login')
+def leads(request):
+    leads = Lead.objects.filter(operator=request.user)
+    if request.method == 'POST':
+        form = LeadForm(request.POST)
+        if form.is_valid():
+            form.instance.operator = request.user
+            form.save()
+            return redirect('leads')
+        else:
+            print(form.errors)
+    else:
+
+        form = LeadForm()
+    return render(request, 'users/leads.html', {'form': form, 'leads': leads})
+
+
+@gym_manager_required(login_url='login')
+def lead_edit(request, pk):
+    lead = Lead.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = LeadForm(request.POST, instance=lead)
+        if form.is_valid():
+            form.save()
+            return redirect('lead_list')
+    else:
+        form = LeadForm(instance=lead)
+    return render(request, 'lead_edit.html', {'form': form})
+
+
+@gym_manager_required(login_url='login')
+def lead_delete(request, pk):
+    lead = Lead.objects.get(pk=pk)
+    if request.method == 'POST':
+        lead.delete()
+        return redirect('lead_list')
+    return render(request, 'lead_delete.html', {'lead': lead})

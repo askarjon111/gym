@@ -1,6 +1,6 @@
 from django.urls import path
 from apps.users.views import (CreateUser, MembersListView, UserDetail,
-                              UserRegistrationView, login_view, LogOutView,
+                              UserRegistrationView, leads, login_view, LogOutView,
                               UserUpdateView, StaffListView, UserDelete,
                               is_user_registered, register_new_user, my_subscription, 
                               my_sessions)
@@ -22,4 +22,7 @@ urlpatterns = [
     path('telegram/register/', register_new_user, name='register-new-user'),
     path('telegram/my-subscription/<int:tg_id>/', my_subscription, name='my-subscription'),
     path('telegram/my-sessions/<int:tg_id>/', my_sessions, name='my-sessions'),
+
+    # Leads:
+    path('leads/', leads, name='leads'),
 ]
