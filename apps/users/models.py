@@ -160,4 +160,7 @@ class Lead(BaseModel):
 
     class Meta:
         ordering = '-id', '-updated_at',
-        
+
+    @property
+    def fullname(self):
+        return f"{self.first_name} {self.last_name}"

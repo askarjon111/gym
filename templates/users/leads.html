@@ -48,19 +48,19 @@
                             <tr>
                                 <th>Имя Фамилия</th>
                                 <th>Номер телефона</th>
-                                <th>План</th>
-                                <th>Статус подписки</th>
-                                <th>Действие</th>
+                                <th>Комментарий</th>
+                                <th>Оператор</th>
+                                <th>Статус</th>
                             </tr>
                         </thead>
                         <tbody>
 
                             {% for member in leads %}
                             <tr>
-                                <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'user-details' member.pk %}">{{ member.fullname }}</a></p></td>
+                                <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'lead-edit' member.pk %}">{{ member.fullname }}</a></p></td>
                                 <td>{{ member.phone_number }}</td>
-                                <td>{% if member.subscription %}{{ member.plan }}{% else %}Нет{% endif %}</td>
-                                <td>{% if member.subscription %}{{ member.subscription.get_status_display }}{% else %}Нет{% endif %}</td>
+                                <td>{{ member.comments }}</td>
+                                <td>{{ member.operator.first_name }}</td>
                                 <td>
                                     
                                     <form class="btn btn-sm" method="post" action="{% url 'users' %}">
@@ -81,9 +81,9 @@
                             <tr>
                                 <th>Имя Фамилия</th>
                                 <th>Номер телефона</th>
-                                <th>План</th>
-                                <th>Окончание подписки</th>
-                                <th>Действие</th>
+                                <th>Комментарий</th>
+                                <th>Оператор</th>
+                                <th>Статус</th>
                             </tr>
                         </tfoot>
                     </table>

@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} - {{ user.fullname }} {% endblock title %}
+{% block members %}active{% endblock %}
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Профиль</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'users' %}">Все клиенты</a></li>
+                    <li class="breadcrumb-item active">Профиль</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+
+                <!-- Profile Image -->
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle"
+                                src="
+                                {% if user.profile.profile_picture %}
+                                {{ user.profile.profile_picture.url }}
+                                {% else %}
+                                {% static 'assets/img/default-user.jpg' %}
+                                {% endif %}"
+                                alt="User profile picture">
+                        </div>
+
+                        <h3 class="profile-username text-center">{{ user.fullname }}
+                            <form class="btn btn-sm" method="post" action="{% url 'users' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="member" value="{{ user.id }}">
+                                <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">
+                                <button title="Пришел" class="btn btn-success btn-sm {% if user.attended %} disabled {% endif %}" type="submit">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </h3>
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <b>Все сессии</b> <a class="float-right">{{ user.gymsession_set.count }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Телефон</b> <a class="float-right">{{ user.phone_number }}</a>
+                            </li>
+                            {% if user.profile %}
+                            <li class="list-group-item">
+                                <b>Пол</b> <a class="float-right">{{ user.profile.get_gender_display }}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Дата рождения</b> <a class="float-right">{{ user.profile.date_of_birth }}</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        <div class="action-buttons text-center">
+                            <button class="btn btn-outline-primary" title="Добавить подписку"
+                            data-toggle="modal" data-target="#modal-default"><i class="fa-solid fa-plus"></i></button>
+                            <button class="btn btn-outline-primary" title="Изменить пользователя" data-toggle="modal"
+                                data-target="#tab"><a href="#edit"><i class="fa-brands fa-telegram"></i></a></button>
+                            <button class="btn btn-outline-primary" title="Доступ" data-toggle="modal"
+                                data-target="#modal-access"><i class="fa-solid fa-qrcode"></i></button>
+                            <button class="btn btn-outline-danger" title="Удалить" data-toggle="modal"
+                                data-target="#modal-delete-user"><i class="fa-solid fa-user-minus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-primary">
+                    <div class="info-box bg-{% if user.subscription %}success{% else %}warning{% endif %}">
+                        <span class="info-box-icon"><i class="fa-regular fa-circle-check"></i></span>
+                
+                        <div class="info-box-content">
+                            <span class="info-box-number">{{ user.plan }}</span>
+                            <span class="info-box-text">До {% if user.subscription %}{{ user.subscription.end_date }}{% else %}--{% endif %}</span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: {{ user.subscription.attendance_percentage }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                Осталось 
+                                {% if user.plan.sessions == 0 %}
+                                ∞
+                                {% else %}
+                                {{ user.left_sessions }}
+                                {% endif %}
+                                сеансов
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Активность</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">История подписок</a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="#edit" data-toggle="tab">Редактировать</a>
+                            </li>
+                        </ul>
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="activity">
+                                {% if attended_sessions %}
+                                    {% for session in attended_sessions %}
+                                        <button class="attendance-button-active" title="{{ session.start }}">
+                                        </button>
+                                    {% endfor %}
+                                    {% if list %}
+                                        {% for session in " "|rjust:list %}
+                                            <button class="attendance-button-disabled"></button>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% else %}
+                                    <h4 class="text-center">У пользователя нет абонемента</h4>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane" id="timeline">
+                                    <div class="card-body p-0 overflow-auto">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 10px">#</th>
+                                                    <th>План</th>
+                                                    <th>Посещаемость</th>
+                                                    <th>Начал</th>
+                                                    <th>Заканчивается</th>
+                                                    <th>Статус</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for sub in subscriptions|dictsortreversed:'id' %}
+                                                <tr>
+                                                    <td>{{ sub.id }}. </td>
+                                                    <td>{{ sub.plan }}</td>
+                                                    <td>
+                                                        {{ sub.used_sessions }}
+                                                        /{% if sub.plan.sessions == 0 %}
+                                                        ∞
+                                                        {% else %}
+                                                        {{ sub.plan.sessions }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ sub.start_date|date:'d.m.Y' }}</td>
+                                                    <td>{{ sub.end_date|date:'d.m.Y' }}</td>
+                                                    <td><span class="badge bg-{% if sub.status == 'active' %}success{% elif sub.status == 'inactive' %}danger{% endif %}">{{ sub.get_status_display }}</span></td></td>
+                                                    <td>
+                                                        <button title="Отменить подписку" value="{{ sub.id }}" class="cancel-subscription btn btn-danger btn-sm {% if sub.status == 'inactive' %}disabled{% endif %}">
+                                                        <i class="fas fa-cancel"></i>
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                            </div>
+                            <div class="tab-pane" id="edit">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button method="post" class="btn btn-success float-right" type="submit">Сохранять</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /.tab-content -->
+                    </div><!-- /.card-body -->
+                </div>
+                <!-- /.nav-tabs-custom -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Добавить подписку</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'add-subscription' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="member" value="{{ user.id }}">
+                
+                <div class="form-group">
+                    <label for="id_member">Пользователь</label>
+                    <input type="text" id="id_member" value="{{ user.fullname }}" class="form-control" readonly>
+                </div>
+                
+                <!-- Other form fields -->
+                <div class="form-group">
+                    <label for="{{ add_subscription_form.plan.id_for_label }}">План</label>
+                    {{ add_subscription_form.plan }}
+                </div>
+                
+                <!-- Display the start_date field -->
+                <div class="form-group">
+                    <label for="{{ add_subscription_form.start_date.id_for_label }}">Дата начала (ММ-ДД-ГГГГ)</label>
+                    {{ add_subscription_form.start_date }}
+                </div>
+                
+                <!-- Display the end_date field -->
+                <div class="form-group">
+                    <label for="{{ add_subscription_form.end_date.id_for_label }}">Дата окончания (ММ-ДД-ГГГГ)</label>
+                    {{ add_subscription_form.end_date }}
+                </div>
+                
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal-delete-user">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Удалить пользователя?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'user-delete' user.pk %}" method="post">
+                {% csrf_token %}
+                <p>Вы действительно хотите удалить этого пользователя?</p>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock content %}
+{% block script %}
+    <script src="{% static 'assets/js/custom.js' %}"></script>
+{% endblock script %}
