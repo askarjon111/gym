@@ -25,5 +25,5 @@ urlpatterns = [
 
     # Leads:
     path('leads/', leads, name='leads'),
-    path('leads/<int:pk>', lead_edit, name='lead-edit'),
+    path('leads/<int:pk>/', lead_edit, name='lead-edit'),
 ]

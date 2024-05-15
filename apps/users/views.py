@@ -390,10 +390,9 @@ def lead_edit(request, pk):
         form = LeadForm(request.POST, instance=lead)
         if form.is_valid():
             form.save()
-            return redirect('leads')
     else:
         form = LeadForm(instance=lead)
-    return render(request, 'users/lead_edit.html', {'form': form})
+    return render(request, 'users/lead_edit.html', {'form': form, 'lead': lead})
 
 
 @gym_manager_required(login_url='login')

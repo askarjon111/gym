@@ -137,13 +137,22 @@ class UserRegistrationForm(UserCreationForm):
 
 
 class LeadForm(forms.ModelForm):
-  class Meta:
-    model = Lead
-    fields = ['phone_number', 'first_name', 'last_name', 'comments', 'status']
 
-  def clean_phone_number(self):
-    # Optional phone number validation logic
-    phone_number = self.cleaned_data['phone_number']
-    # Add your phone number validation here (e.g., length, format)
-    return phone_number
+    phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                   label="Номер телефона")
+    first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                 label="Имя")
+    last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                label="Фамилия")
+    comments = forms.Textarea()
+    status = forms.ChoiceField(choices=Lead.STATUS_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control'}),
+                                label="Статус")
+
+    class Meta:
+        model = Lead
+        fields = ['status', 'first_name', 'last_name', 'phone_number', 'comments']
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+        return phone_number
 
