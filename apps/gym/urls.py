@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views.main import home, PlansView, AddSubscriptionView, \
+from .views.main import UpdatePlanView, home, PlansView, AddSubscriptionView, \
     AddNewPlanView, ArchivePlanView, get_plan_days, cancel_subscription
 from .views.statistics import statistics
 
@@ -16,6 +16,6 @@ urlpatterns = [
     path('plans/', PlansView.as_view(), name='plans'),
     path('plans/<int:plan_id>/days/', get_plan_days, name='get-plan-days'),
     path('plans/<int:pk>/archive/', ArchivePlanView.as_view(), name='archive-plan'),
-    path('plans/<int:pk>/edit/', PlansView.as_view(), name='edit-plan'),
+    path('plans/<int:pk>/update/', UpdatePlanView.as_view(), name='update-plan'),
     path('statistics/', statistics, name="statistics"),
 ]

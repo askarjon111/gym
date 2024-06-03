@@ -38,19 +38,27 @@ class PlansView(View):
             plans = gym.plans.order_by('-is_active')
         return render(request, self.template_name, {'plans': plans, 'form': AddNewPlanForm})
 
-    def post(self, request, pk):
-        plan = Plan.objects.get(pk=pk)
-        form = AddNewPlanForm(request.POST, instance=plan)
 
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class UpdatePlanView(View):
+    template_name = 'gym/plan_update.html'
+
+    def get(self, request, pk):
+        plan = get_object_or_404(Plan, pk=pk, gym=request.user.gym)
+        form = AddNewPlanForm(instance=plan)
+        return render(request, self.template_name, {'form': form, 'plan': plan})
+
+    def post(self, request, pk):
+        plan = get_object_or_404(Plan, pk=pk)
+        form = AddNewPlanForm(request.POST, instance=plan)
         if form.is_valid():
             form.save()
             messages.success(request, "Plan updated successfully!")
+            return redirect('plans')
         else:
-            for error in form.errors:
-                messages.add_message(request, messages.WARNING,
-                                    f"Ошибка: {error}")
-
-        return redirect('plans')
+            messages.error(request, "There was an error updating the plan.")
+            return render(request, self.template_name, {'form': form, 'plan': plan})
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
@@ -59,9 +67,9 @@ class AddNewPlanView(View):
     template_name = 'users/plans.html'
 
     def post(self, request):
-        form = AddNewPlanForm(request.POST)
+        form = AddNewPlanForm(request.POST, gym=self.request.user.gym)
         if form.is_valid():
-            form.save(gym=self.request.user.gym)
+            form.save()
         else:
             print(form.errors)
         return redirect('plans')

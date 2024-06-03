@@ -46,7 +46,7 @@
                             <tr>
                                 <td>
                                     <p><a class="link-offset-2 link-underline link-underline-opacity-0"
-                                            href="{% url 'user-details' plan.pk %}">{{ plan.name }}</a></p>
+                                            href="{% url 'update-plan' plan.pk %}">{{ plan.name }}</a></p>
                                 </td>
                                 <td>{% if plan.description %}{{ plan.description }}{% endif %}</td>
                                 <td>{{ plan.price|floatformat:"-2"|default:"0"|intcomma }} сўм</td>
@@ -61,11 +61,17 @@
                                         {% endif %}
                                     </span>
                                 </td>
-                                {% if plan.is_active %}
-                                <td><button class="btn btn-primary btn-sm" title="В архив" data-toggle="modal"
-                                        data-target="#modal-archive-plan-{{ plan.id }}"><i
-                                            class="fa-solid fa-box-archive"></i></button></td>
-                                {% endif %}
+                                
+                                
+                                <td>
+                                    <a href="{% url 'update-plan' plan.pk %}" class="btn btn-primary btn-sm" title="Edit Plan">
+                                        <i class="fa-solid fa-edit"></i></a>
+                                    {% if plan.is_active %}
+                                    <button class="btn btn-primary btn-sm" title="В архив" data-toggle="modal"
+                                        data-target="#modal-archive-plan-{{ plan.id }}"><i class="fa-solid fa-box-archive"></i></button>
+                                    {% endif %}
+                                </td>
+                                
                             </tr>
                             <div class="modal fade" id="modal-archive-plan-{{ plan.id }}">
                                 <div class="modal-dialog">

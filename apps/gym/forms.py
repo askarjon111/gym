@@ -58,13 +58,16 @@ class AddNewPlanForm(forms.ModelForm):
         fields = ['gym', 'name', 'description', 'price', 'sessions', 'days']
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
         self.request = kwargs.pop('request', None)
+        self.gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
         super(AddNewPlanForm, self).__init__(*args, **kwargs)
         self.fields['gym'].widget = forms.HiddenInput()
 
+
     def save(self, commit=True, **kwargs):
         instance = super(AddNewPlanForm, self).save(commit=False)
-        instance.gym = kwargs.get('gym', None)
+        if not instance.pk:
+            instance.gym = self.gym
+
         instance.save()

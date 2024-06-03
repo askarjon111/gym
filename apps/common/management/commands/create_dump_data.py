@@ -88,6 +88,7 @@ class Command(BaseCommand):
                 description="Стандартный план",
                 price=350000,
                 sessions=12,
+                days=30,
                 gym=gym)
             standard_plan.save()
 
@@ -96,6 +97,7 @@ class Command(BaseCommand):
                 description="VIP план",
                 price=400000,
                 sessions=0,
+                days=30,
                 gym=gym)
             vip_plan.save()
         return 'Gyms created.'
@@ -111,8 +113,8 @@ class Command(BaseCommand):
                     continue
                 user = User.objects.create(
                     phone_number=phone_number,
-                    first_name=f"User{random.randint(1, 100)}",
-                    last_name=f"Last{random.randint(1, 100)}",
+                    first_name=f"Ism {random.randint(1, 100)}",
+                    last_name=f"Familiya {random.randint(1, 100)}",
                     is_active=True,
                     is_staff=False,
                 )
