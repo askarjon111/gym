@@ -11,7 +11,7 @@ RUN python3 -m pip install --upgrade pip && python3 -m pip install -r requiremen
 # Install Gunicorn
 RUN python3 -m pip install gunicorn
 
-COPY ./docker-entrypoint-initdb.d/init.sql /docker-entrypoint-initdb.d/
+# COPY ./docker-entrypoint-initdb.d/init.sql /docker-entrypoint-initdb.d/
 
 # Copy the entire project into the image
 COPY . .
