@@ -20,6 +20,9 @@ schema_view = get_schema_view(
 )
 
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns = [
     # swagger
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0),
@@ -34,4 +37,5 @@ urlpatterns = [
     path('notifications/', include('apps.notifications.urls')),
     path('', include('apps.websites.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
+    path('sentry-debug/', trigger_error),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,5 @@
 
+import re
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -9,7 +10,7 @@ from django.utils import timezone
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, FormView
+from django.views.generic import FormView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from rest_framework.decorators import api_view
@@ -20,10 +21,11 @@ from apps.gym.forms import AddSubscriptionForm
 from django.core import serializers
 
 from apps.users.models import Lead, User
-from apps.gym.models import GymSession, Plan, Subscription
+from apps.gym.models import GymSession, Subscription
 from apps.users.forms import AttendanceForm, LeadForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
 from apps.users.permissions import gym_manager_required
 from apps.users.tasks import generate_and_save_access
+from project.settings import ERROR_PATTERN
 
 
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
@@ -42,9 +44,8 @@ class CreateUser(View):
                 instance = form.save()
                 user = User.objects.get(phone_number=instance.phone_number)
             else:
-                for error in form.errors:
-                    messages.add_message(self.request, messages.WARNING,
-                                         f"Ошибка: {error}")
+                errors = ERROR_PATTERN.search(str(form.errors)).group(1)
+                messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
                 return redirect('add-user')
         user.gyms.add(gym)
         user.save()
@@ -212,9 +213,8 @@ class UserDetail(LoginRequiredMixin, View):
                 form.save()
                 return redirect('user-details', pk=pk)
             else:
-                for error in form.errors:
-                    messages.add_message(self.request, messages.WARNING,
-                                         f"Ошибка: {error}")
+                errors = ERROR_PATTERN.search(str(form.errors)).group(1)
+                messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
             return render(request, 'users/member.html', context)
         except:
             messages.add_message(self.request, messages.WARNING,
@@ -376,9 +376,10 @@ def leads(request):
             form.save()
             return redirect('leads')
         else:
-            print(form.errors)
+            errors = ERROR_PATTERN.search(str(form.errors)).group(1)
+            messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
+            return redirect('leads')
     else:
-
         form = LeadForm()
     return render(request, 'users/leads.html', {'form': form, 'leads': leads})
 

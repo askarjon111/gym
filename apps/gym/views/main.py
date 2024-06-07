@@ -14,6 +14,7 @@ from apps.gym.forms import AddNewPlanForm, AddSubscriptionForm
 from apps.gym.models import GymSession, Plan, Subscription
 from apps.users.models import User
 from apps.users.permissions import gym_manager_required
+from project.settings import ERROR_PATTERN
 
 
 @gym_manager_required(login_url='login')
@@ -39,7 +40,6 @@ class PlansView(View):
         return render(request, self.template_name, {'plans': plans, 'form': AddNewPlanForm})
 
 
-
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class UpdatePlanView(View):
     template_name = 'gym/plan_update.html'
@@ -54,10 +54,11 @@ class UpdatePlanView(View):
         form = AddNewPlanForm(request.POST, instance=plan)
         if form.is_valid():
             form.save()
-            messages.success(request, "Plan updated successfully!")
+            messages.success(request, "План успешно обновлен!")
             return redirect('plans')
         else:
-            messages.error(request, "There was an error updating the plan.")
+            errors = ERROR_PATTERN.search(str(form.errors)).group(1)
+            messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
             return render(request, self.template_name, {'form': form, 'plan': plan})
 
 
@@ -130,7 +131,6 @@ def get_plan_days(request, plan_id):
 # @gym_manager_required(login_url='login')
 @api_view(['POST'])
 def cancel_subscription(request, sub_id):
-    print('test')
     try:
         subscription = Subscription.objects.get(pk=sub_id)
         subscription.status = STATUS_CHOICES[1][0]
