@@ -55,6 +55,10 @@ services:
   postgres:
     image: postgres:15-alpine
     env_file: .env
+    restart: always
+    environment:
+      POSTGRES_LOGGING_COLLECTOR: "true"
+      POSTGRES_LOGGING_MIN_MESSAGES: "DEBUG1"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
@@ -72,6 +76,7 @@ services:
     ports:
       - '8000:80'
       - '443:443'
+
     depends_on:
       - web_service
     logging:
