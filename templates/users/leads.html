@@ -63,7 +63,7 @@
                                 <td>{% if request.user == member.operator %}Вы{% else %}{{ member.operator.first_name }}{% endif %}</td>
                                 <td>
                                     
-                                    <form class="btn btn-sm" method="post" action="{% url 'users' %}">
+                                    <form class="btn btn-sm" method="post" action="{% url 'activate-lead' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="member" value="{{ member.id }}">
                                         <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">

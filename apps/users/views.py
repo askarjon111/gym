@@ -369,6 +369,7 @@ def my_sessions(request, tg_id):
 @gym_manager_required(login_url='login')
 def leads(request):
     leads = Lead.objects.filter(operator=request.user)
+    leads = leads.exclude(status=Lead.STATUS_CHOICES[2][0])
     if request.method == 'POST':
         form = LeadForm(request.POST)
         if form.is_valid():
@@ -403,3 +404,15 @@ def lead_delete(request, pk):
         lead.delete()
         return redirect('lead_list')
     return render(request, 'lead_delete.html', {'lead': lead})
+
+
+@gym_manager_required(login_url='login')
+def activate_lead(request):
+    if request.method == 'POST':
+        lead = Lead.objects.filter(id=request.POST.get('member')).first()
+        user = User.objects.create(first_name=lead.first_name,
+                                   last_name=lead.last_name,
+                                   phone_number=lead.phone_number)
+        lead.status=Lead.STATUS_CHOICES[2][0]
+        lead.save()
+        return redirect('user-details', pk=user.pk)
