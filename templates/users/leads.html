@@ -73,8 +73,7 @@
                                     <form class="btn btn-sm" method="post" action="{% url 'canceled_lead' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="member" value="{{ member.id }}">
-                                        <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">
-                                        <button title="Не-Пришел" class="btn btn-success btn-sm {% if member.attended %} disabled {% endif %}" type="submit">
+                                        <button title="Не-Пришел" class="btn btn-danger btn-sm {% if member.status == 'cancelled' %}disabled{% endif %}" type="submit">
                                             <i class="fas fa-cancel"></i>
                                         </button>
                                     </form>

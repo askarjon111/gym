@@ -410,12 +410,18 @@ def lead_delete(request, pk):
 def activate_lead(request):
     if request.method == 'POST':
         lead = Lead.objects.filter(id=request.POST.get('member')).first()
-        user = User.objects.create(first_name=lead.first_name,
-                                    last_name=lead.last_name,
-                                    phone_number=lead.phone_number)
-        lead.status=Lead.STATUS_CHOICES[2][0]
-        lead.save()
-        return redirect('user-details',pk=user.pk)
+        user = User.objects.filter(phone_number=lead.phone_number)
+        if not user.exists():
+            user = User.objects.create(first_name=lead.first_name,
+                                        last_name=lead.last_name,
+                                        phone_number=lead.phone_number)
+            lead.status=Lead.STATUS_CHOICES[2][0]
+            lead.save()
+            return redirect('user-details', pk=user.pk)
+        else:
+            messages.add_message(request, messages.WARNING, "Клиент с таким номером телефона уже существует!")
+            return redirect('leads')
+        
 
 @gym_manager_required(login_url='login')
 def canceled_lead(request):
