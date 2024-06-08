@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.contrib import messages
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
 from apps.common.choices import STATUS_CHOICES
@@ -27,7 +28,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     gyms = models.ManyToManyField(Gym, related_name='users')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    telegram_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
+    telegram_id = models.CharField(
+        max_length=30, unique=True, blank=True, null=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'
@@ -42,7 +44,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         self.phone_number = self.phone_number.replace("+", "")
 
         super().save(*args, **kwargs)
-
 
     def __str__(self):
         return self.phone_number
@@ -155,7 +156,8 @@ class Lead(BaseModel):
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
     operator = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -164,3 +166,4 @@ class Lead(BaseModel):
     @property
     def fullname(self):
         return f"{self.first_name} {self.last_name}"
+

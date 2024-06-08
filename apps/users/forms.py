@@ -155,4 +155,3 @@ class LeadForm(forms.ModelForm):
     def clean_phone_number(self):
         phone_number = self.cleaned_data['phone_number']
         return phone_number
-

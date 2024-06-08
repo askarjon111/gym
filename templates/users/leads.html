@@ -62,11 +62,12 @@
                                 <td>{{ member.comments }}</td>
                                 <td>{% if request.user == member.operator %}Вы{% else %}{{ member.operator.first_name }}{% endif %}</td>
                                 <td>
+                                    {% if member.status != 'confirmed' %}
                                     <form class="btn btn-sm" method="post" action="{% url 'activate-lead' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="member" value="{{ member.id }}">
                                         <input type="hidden" name="start" value="{{ now|date:'Y-m-d' }}T{{ now|date:'H:i' }}">
-                                        <button title="Пришел" class="btn btn-success btn-sm {% if member.attended %} disabled {% endif %}" type="submit">
+                                        <button title="Пришел" class="btn btn-success btn-sm {% if member.status == 'confirmed' %}disabled{% endif %}" type="submit">
                                             <i class="fas fa-check"></i>
                                         </button>
                                     </form>
@@ -77,6 +78,7 @@
                                             <i class="fas fa-cancel"></i>
                                         </button>
                                     </form>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
