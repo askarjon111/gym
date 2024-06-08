@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 
     # packages
-    'drf_yasg',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
