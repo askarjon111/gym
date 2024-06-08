@@ -62,7 +62,6 @@
                                 <td>{{ member.comments }}</td>
                                 <td>{% if request.user == member.operator %}Вы{% else %}{{ member.operator.first_name }}{% endif %}</td>
                                 <td>
-
                                     <form class="btn btn-sm" method="post" action="{% url 'activate-lead' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="member" value="{{ member.id }}">

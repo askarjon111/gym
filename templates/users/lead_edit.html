@@ -39,7 +39,6 @@
                                 {% endif %}"
                                 alt="User profile picture">
                         </div>
-
                         <h3 class="profile-username text-center">{{ lead.fullname }}
                             <form class="btn btn-sm" method="post" action="{% url 'leads' %}">
                                 {% csrf_token %}
@@ -71,8 +70,6 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div class="card-primary">
                     <div class="info-box bg-{% if lead.status == "new" %}success{% elif lead.status == "cancelled" %}danger{% elif lead.status == "confirmed" %}secondary{% else %}warning{% endif %}">
                         <span class="info-box-icon">

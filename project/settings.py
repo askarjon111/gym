@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -85,11 +86,11 @@ DATABASES = {
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': "django.db.backends.postgresql",
-#         'NAME': os.environ.get('POSTGRES_NAME'),
+#         'ENGINE': os.environ.get('DB_ENGINE'),
+#         'NAME': os.environ.get('DATABASE'),
 #         'USER': os.environ.get('POSTGRES_USER'),
 #         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-#         'HOST': "localhost",
+#         'HOST': os.environ.get('POSTGRES_HOST'),
 #         'PORT': os.environ.get('POSTGRES_PORT'),
 #     }
 # }
@@ -263,3 +264,19 @@ CELERY_BEAT_SCHEDULE = {
         },
     },
 }
+
+
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://87216a5c1a266da65b9921778c328707@o1234455.ingest.us.sentry.io/4507373660405760",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
+
+ERROR_PATTERN = re.compile(r'<ul class="errorlist"><li>.*?<ul class="errorlist"><li>(.*?)</li>.*?</li></ul>', re.DOTALL)
