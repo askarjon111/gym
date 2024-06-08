@@ -134,9 +134,7 @@ class Command(BaseCommand):
                 )
                 today = timezone.now()
                 thirty_days_ago = today - timedelta(days=30)
-                start_date = today - \
-                    timedelta(seconds=random.randint(
-                        0, (today - thirty_days_ago).total_seconds()))
+                start_date = today - timedelta(days=30)
                 Subscription.objects.create(
                     member=user,
                     plan=random.choice(plans),
