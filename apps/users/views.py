@@ -402,7 +402,7 @@ def lead_delete(request, pk):
     lead = Lead.objects.get(pk=pk)
     if request.method == 'POST':
         lead.delete()
-        return redirect('lead_list')
+        return redirect('leads')
     return render(request, 'lead_delete.html', {'lead': lead})
 
 
@@ -413,8 +413,7 @@ def activate_lead(request):
         lead.status=Lead.STATUS_CHOICES[2][0]
         lead.save()
         return redirect('leads')
-
-        
+   
 
 @gym_manager_required(login_url='login')
 def canceled_lead(request):

@@ -129,7 +129,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'user-delete' user.pk %}" method="post">
+                <form action="{% url 'lead_delete' lead.pk %}" method="post">
                 {% csrf_token %}
                 <p>Вы действительно хотите удалить этого пользователя?</p>
                 <div class="modal-footer justify-content-between">

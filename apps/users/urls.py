@@ -1,6 +1,6 @@
 from django.urls import path
 from apps.users.views import (CreateUser, MembersListView, UserDetail,
-                              UserRegistrationView, activate_lead, canceled_lead, lead_edit, leads, login_view, LogOutView,
+                              UserRegistrationView, activate_lead, canceled_lead, lead_delete, lead_edit, leads, login_view, LogOutView,
                               UserUpdateView, StaffListView, UserDelete,
                               is_user_registered, register_new_user, my_subscription, 
                               my_sessions)
@@ -28,4 +28,5 @@ urlpatterns = [
     path('leads/<int:pk>/', lead_edit, name='lead-edit'),
     path('leads/activate/',activate_lead,name='activate-lead'),
     path('leads/canceled/',canceled_lead,name='canceled_lead'),
+    path('leads/<int:pk>/delete/', lead_delete, name='lead_delete'),
 ]
