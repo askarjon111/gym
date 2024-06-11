@@ -387,8 +387,17 @@ def leads(request):
         if query:
             leads = leads.filter(Q(first_name__contains=query) | Q(last_name__contains=query) |
                                  Q(phone_number__contains=query))
+        paginator = Paginator(leads, 20)
+        page = request.GET.get('page')
+
+        try:
+            leads = paginator.page(page)
+        except PageNotAnInteger:
+            leads = paginator.page(1)
+        except EmptyPage:
+            leads = paginator.page(paginator.num_pages)
         form = LeadForm()
-    return render(request, 'users/leads.html', {'form': form, 'leads': leads})
+    return render(request, 'users/leads.html', {'form': form, 'objects': leads})
 
 
 @gym_manager_required(login_url='login')

@@ -56,7 +56,7 @@
                         </thead>
                         <tbody>
 
-                            {% for member in leads %}
+                            {% for member in objects %}
                             <tr>
                                 <td><p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'lead-edit' member.pk %}">{{ member.fullname }}</a></p></td>
                                 <td>{{ member.phone_number }}</td>
