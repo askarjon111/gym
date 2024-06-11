@@ -1,5 +1,4 @@
 
-import re
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -384,6 +383,10 @@ def leads(request):
                 request, messages.WARNING, f"Ошибка: {errors}")
             return redirect('leads')
     else:
+        query = request.GET.get('q', None)
+        if query:
+            leads = leads.filter(Q(first_name__contains=query) | Q(last_name__contains=query) |
+                                 Q(phone_number__contains=query))
         form = LeadForm()
     return render(request, 'users/leads.html', {'form': form, 'leads': leads})
 
