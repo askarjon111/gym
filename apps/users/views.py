@@ -412,9 +412,8 @@ def lead_delete(request, pk):
 def activate_lead(request):
     if request.method == 'POST':
         lead = Lead.objects.filter(id=request.POST.get('member')).first()
-        user, _ = User.objects.get_or_create(first_name=lead.first_name,
-                                             last_name=lead.last_name,
-                                             phone_number=lead.phone_number)
+        user, _ = User.objects.update_or_create(phone_number=lead.phone_number,
+                                                defaults={'first_name': lead.first_name, 'last_name': lead.last_name})
         user.gyms.add(request.user.gym)
         user.save()
         lead.status = Lead.STATUS_CHOICES[2][0]
