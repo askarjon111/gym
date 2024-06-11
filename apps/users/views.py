@@ -45,7 +45,8 @@ class CreateUser(View):
                 user = User.objects.get(phone_number=instance.phone_number)
             else:
                 errors = ERROR_PATTERN.search(str(form.errors)).group(1)
-                messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
+                messages.add_message(
+                    request, messages.WARNING, f"Ошибка: {errors}")
                 return redirect('add-user')
         user.gyms.add(gym)
         user.save()
@@ -214,7 +215,8 @@ class UserDetail(LoginRequiredMixin, View):
                 return redirect('user-details', pk=pk)
             else:
                 errors = ERROR_PATTERN.search(str(form.errors)).group(1)
-                messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
+                messages.add_message(
+                    request, messages.WARNING, f"Ошибка: {errors}")
             return render(request, 'users/member.html', context)
         except:
             messages.add_message(self.request, messages.WARNING,
@@ -378,7 +380,8 @@ def leads(request):
             return redirect('leads')
         else:
             errors = ERROR_PATTERN.search(str(form.errors)).group(1)
-            messages.add_message(request, messages.WARNING, f"Ошибка: {errors}")
+            messages.add_message(
+                request, messages.WARNING, f"Ошибка: {errors}")
             return redirect('leads')
     else:
         form = LeadForm()
@@ -406,19 +409,23 @@ def lead_delete(request, pk):
     return render(request, 'lead_delete.html', {'lead': lead})
 
 
-@gym_manager_required(login_url='login')
 def activate_lead(request):
     if request.method == 'POST':
         lead = Lead.objects.filter(id=request.POST.get('member')).first()
-        lead.status=Lead.STATUS_CHOICES[2][0]
+        user, _ = User.objects.get_or_create(first_name=lead.first_name,
+                                             last_name=lead.last_name,
+                                             phone_number=lead.phone_number)
+        user.gyms.add(request.user.gym)
+        user.save()
+        lead.status = Lead.STATUS_CHOICES[2][0]
         lead.save()
-        return redirect('leads')
-   
+        return redirect('user-details', pk=user.pk)
+
 
 @gym_manager_required(login_url='login')
 def canceled_lead(request):
     if request.method == 'POST':
         lead = Lead.objects.filter(id=request.POST.get('member')).first()
-        lead.status=Lead.STATUS_CHOICES[3][0]
+        lead.status = Lead.STATUS_CHOICES[3][0]
         lead.save()
         return redirect('leads')
