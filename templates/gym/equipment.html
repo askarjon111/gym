@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %} - Тарифы {% endblock title %}
+
+{% block plans %}active{% endblock %}
+
+{% block content %}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Все оборудование</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">Все оборудование</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <button href="#" class="float-right btn btn-primary" title="Добавить подписку" data-toggle="modal"
+                        data-target="#modal-add-plan"><i class="fa-solid fa-plus"></i> Добавить оборудование</button>
+                </div>
+                <div class="card-body overflow-auto">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Описание</th>
+                                <th>Изображение</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for eq in equipment %}
+                            <tr>
+                                <td>
+                                    <p><a class="link-offset-2 link-underline link-underline-opacity-0"
+                                            href="">{{ eq.name }}</a></p>
+                                </td>
+                                <td>{% if eq.description %}{{ eq.description }}{% endif %}</td>
+                                <td>{% if eq.image %} <img width="100" src="{{ eq.image.url }}" alt=""> {% endif %}</td>
+                                <td>
+                                    <a href="" class="btn btn-primary btn-sm" title="Edit Plan">
+                                        <i class="fa-solid fa-edit"></i></a>
+                                    {% if eq.is_active %}
+                                    <button class="btn btn-primary btn-sm" title="В архив" data-toggle="modal"
+                                        data-target="#modal-archive-plan-{{ eq.id }}"><i class="fa-solid fa-box-archive"></i></button>
+                                    {% endif %}
+                                </td>
+                                
+                            </tr>
+                            <div class="modal fade" id="modal-archive-plan-{{ eq.id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content bg-warning">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">В архив</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Вы хотите удалить это оборудование?</p>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-outline-light"
+                                                data-dismiss="modal">Закрывать</button>
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-light">Да</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Название</th>
+                                <th>Описание</th>
+                                <th>Изображение</th>
+                                <th>Действие</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            {% include 'blocks/_pagination.html' %}
+        </div>
+    </div>
+    <div class="modal fade" id="modal-add-plan">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавить план</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'add-plan' %}" method="post">
+                <div class="modal-body">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</section>
+{% endblock content %}

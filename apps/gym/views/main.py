@@ -140,3 +140,15 @@ def cancel_subscription(request, sub_id):
         return Response({'error': 'Subscription not found'}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class EquipmentView(View):
+    template_name = 'gym/equipment.html'
+    form = AddNewPlanForm
+
+    def get(self, request):
+        gym = self.request.user.gym
+        if gym:
+            equipment = gym.gymequipment_set.all()
+        return render(request, self.template_name, {'equipment': equipment, 'form': AddNewPlanForm})
