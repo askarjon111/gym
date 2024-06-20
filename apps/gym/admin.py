@@ -1,9 +1,10 @@
 from django.contrib import admin
-from apps.gym.models import GymProgram, GymSession, Plan, Subscription
+from apps.gym.models import GymEquipment, GymProgram, GymSession, Plan, Subscription
 
 
 admin.site.register(Plan)
 admin.site.register(GymProgram)
+admin.site.register(GymEquipment)
 
 
 @admin.register(GymSession)

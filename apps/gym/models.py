@@ -108,3 +108,10 @@ class GymProgram(BaseModel):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     is_public = models.BooleanField(default=True)
+
+
+class GymEquipment(BaseModel):
+    name = models.CharField(max_length=250)
+    description = models.TextField(blank=True, null=True)
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="gym/equipment", blank=True, null=True)
