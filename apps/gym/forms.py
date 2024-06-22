@@ -71,3 +71,34 @@ class AddNewPlanForm(forms.ModelForm):
             instance.gym = self.gym
 
         instance.save()
+
+
+class AddNewGymEquipmentForm(forms.ModelForm):
+    gym = forms.ModelChoiceField(queryset=Gym.objects.all(), required=False,
+                                 widget=forms.Select(attrs={'class': 'form-control'}), label="Спортзал")
+    name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                           label="Название")
+    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
+                                  label="Описание")
+    image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control'}), label="Изображение")
+
+    class Meta:
+        model = Plan
+        fields = ['gym', 'name', 'description', 'image']
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        self.gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        print(args)
+        super(AddNewGymEquipmentForm, self).__init__(*args, **kwargs)
+        self.fields['gym'].widget = forms.HiddenInput()
+
+
+    def save(self, commit=True, **kwargs):
+        instance = super(AddNewGymEquipmentForm, self).save(commit=False)
+        if not instance.pk:
+            instance.gym = self.gym
+
+        instance.save()

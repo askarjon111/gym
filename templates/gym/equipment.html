@@ -110,7 +110,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{% url 'add-plan' %}" method="post">
+                <form action="{% url 'add-equipment' %}" method="post">
                 <div class="modal-body">
                         {% csrf_token %}
                         {{ form.as_p }}

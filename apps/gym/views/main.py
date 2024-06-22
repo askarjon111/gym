@@ -1,17 +1,17 @@
 from datetime import timedelta
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.generic import CreateView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from apps.common.choices import STATUS_CHOICES
 from apps.controls.models import Gym
-from apps.gym.forms import AddNewPlanForm, AddSubscriptionForm
+from apps.gym.forms import AddNewGymEquipmentForm, AddNewPlanForm, AddSubscriptionForm
 
 
-from apps.gym.models import GymSession, Plan, Subscription
+from apps.gym.models import GymEquipment, GymSession, Plan, Subscription
 from apps.users.models import User
 from apps.users.permissions import gym_manager_required
 from project.settings import ERROR_PATTERN
@@ -145,10 +145,24 @@ def cancel_subscription(request, sub_id):
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class EquipmentView(View):
     template_name = 'gym/equipment.html'
-    form = AddNewPlanForm
+    form = AddNewGymEquipmentForm
 
     def get(self, request):
         gym = self.request.user.gym
         if gym:
             equipment = gym.gymequipment_set.all()
-        return render(request, self.template_name, {'equipment': equipment, 'form': AddNewPlanForm})
+        return render(request, self.template_name, {'equipment': equipment, 'form': self.form})
+
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class AddNewGymEquipmentView(CreateView):
+    model = GymEquipment
+    template_name = 'users/equipment.html'
+
+    def post(self, request):
+        form = AddNewGymEquipmentForm(request.POST, request.FILES, gym=self.request.user.gym)
+        if form.is_valid():
+            form.save()
+        else:
+            print(form.errors)
+        return redirect('equipment')
