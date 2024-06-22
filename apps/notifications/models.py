@@ -21,7 +21,6 @@ class Notification(BaseModel):
     sent = models.BooleanField(default=False)
     is_draft = models.BooleanField(default=True)
 
-
     def send(self):
         from apps.notifications.tasks import send_message
         receiver = self.receiver.phone_number if self.type == self.TYPE_CHOICES[0][0] else self.receiver.telegram_id

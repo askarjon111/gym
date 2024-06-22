@@ -108,7 +108,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{% url 'add-equipment' %}" method="post">
+                <form action="{% url 'add-equipment' %}" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                         {% csrf_token %}
                         {{ form.as_p }}

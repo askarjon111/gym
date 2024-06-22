@@ -3,7 +3,7 @@ from django.utils import timezone
 from django import forms
 from apps.controls.models import Gym
 
-from apps.gym.models import Plan, Subscription
+from apps.gym.models import GymEquipment, Plan, Subscription
 from apps.users.models import User
 
 
@@ -83,7 +83,7 @@ class AddNewGymEquipmentForm(forms.ModelForm):
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control'}), label="Изображение")
 
     class Meta:
-        model = Plan
+        model = GymEquipment
         fields = ['gym', 'name', 'description', 'image']
 
 
@@ -91,8 +91,6 @@ class AddNewGymEquipmentForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         self.gym = kwargs.pop('gym', None)
         super().__init__(*args, **kwargs)
-        print(args)
-        super(AddNewGymEquipmentForm, self).__init__(*args, **kwargs)
         self.fields['gym'].widget = forms.HiddenInput()
 
 
