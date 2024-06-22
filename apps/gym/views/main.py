@@ -166,3 +166,10 @@ class AddNewGymEquipmentView(CreateView):
         else:
             print(form.errors)
         return redirect('equipment')
+
+
+@gym_manager_required(login_url='login')
+def remove_equipment(request, pk):
+    equipment = get_object_or_404(GymEquipment, id=pk)
+    equipment.delete()
+    return redirect('equipment')

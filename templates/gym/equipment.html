@@ -51,18 +51,16 @@
                                 <td>
                                     <a href="" class="btn btn-primary btn-sm" title="Edit Plan">
                                         <i class="fa-solid fa-edit"></i></a>
-                                    {% if eq.is_active %}
-                                    <button class="btn btn-primary btn-sm" title="В архив" data-toggle="modal"
-                                        data-target="#modal-archive-plan-{{ eq.id }}"><i class="fa-solid fa-box-archive"></i></button>
-                                    {% endif %}
+                                    <button class="btn btn-danger btn-sm" title="В архив" data-toggle="modal"
+                                        data-target="#modal-archive-plan-{{ eq.id }}"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                                 
                             </tr>
                             <div class="modal fade" id="modal-archive-plan-{{ eq.id }}">
                                 <div class="modal-dialog">
-                                    <div class="modal-content bg-warning">
+                                    <div class="modal-content bg-danger">
                                         <div class="modal-header">
-                                            <h4 class="modal-title">В архив</h4>
+                                            <h4 class="modal-title">Удалить оборудование</h4>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -73,7 +71,7 @@
                                         <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-outline-light"
                                                 data-dismiss="modal">Закрывать</button>
-                                            <form method="post" action="">
+                                            <form method="post" action="{% url 'delete-equipment' eq.id %}">
                                                 {% csrf_token %}
                                                 <button type="submit" class="btn btn-outline-light">Да</button>
                                             </form>

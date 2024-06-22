@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views.main import AddNewGymEquipmentView, EquipmentView, UpdatePlanView, home, PlansView, AddSubscriptionView, \
-    AddNewPlanView, ArchivePlanView, get_plan_days, cancel_subscription
+    AddNewPlanView, ArchivePlanView, get_plan_days, cancel_subscription, remove_equipment
 from .views.statistics import statistics
 
 urlpatterns = [
@@ -13,7 +13,8 @@ urlpatterns = [
     path('subscriptions/<int:sub_id>/cancel/',
          cancel_subscription, name='cancel-subscription'),
     path('equipment/', EquipmentView.as_view(), name='equipment'),
-    path('add-equipment/', AddNewGymEquipmentView.as_view(), name='add-equipment'),
+    path('equipment/add', AddNewGymEquipmentView.as_view(), name='add-equipment'),
+    path('equipment/<int:pk>/delete', remove_equipment, name='delete-equipment'),
     path('add-plan/', AddNewPlanView.as_view(), name='add-plan'),
     path('plans/', PlansView.as_view(), name='plans'),
     path('plans/<int:plan_id>/days/', get_plan_days, name='get-plan-days'),
