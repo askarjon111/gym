@@ -34,7 +34,6 @@ class UserUpdateForm(forms.Form):
     telegram_id = forms.CharField(max_length=30, widget=forms.TextInput(
         attrs={'class': 'form-control'}), required=False, label="Телеграм ID")
 
-
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
@@ -44,7 +43,6 @@ class UserUpdateForm(forms.Form):
             self.fields['first_name'].initial = self.instance.first_name
             self.fields['last_name'].initial = self.instance.last_name
             self.fields['telegram_id'].initial = self.instance.telegram_id
-
 
     def save(self, commit=True):
         if self.instance:
@@ -58,19 +56,11 @@ class UserUpdateForm(forms.Form):
         return None
 
 
-class UserProfileCreateForm(forms.ModelForm):
+class UserProfileUpdateForm(forms.ModelForm):
     weight = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
                               label="Вес")
     height = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
                               label="Рост")
-    biceps = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
-                              label="Бицепс")
-    triceps = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
-                               label="Трицепс")
-    chest = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
-                             label="Грудь")
-    guts = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}),
-                            label="Живот")
     profile_picture = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
                                        label="Фото профиля")
     gender = forms.ChoiceField(choices=UserProfile.GENDER_CHOICES,
@@ -88,20 +78,12 @@ class UserProfileCreateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('weight', 'height', 'biceps', 'triceps', 'chest', 'guts', 'profile_picture',
+        fields = ('weight', 'height', 'profile_picture',
                   'gender', 'date_of_birth', 'user_type')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        profile = super().save(commit=False)
-        user = self.request.user
-        if user:
-            profile.user = user
-            profile.save()
-        return profile
 
 
 class AttendanceForm(forms.ModelForm):
@@ -135,7 +117,6 @@ class UserRegistrationForm(UserCreationForm):
                   'last_name', 'password1', 'password2']
 
 
-
 class LeadForm(forms.ModelForm):
 
     phone_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}),
@@ -146,11 +127,12 @@ class LeadForm(forms.ModelForm):
                                 label="Фамилия")
     comments = forms.Textarea()
     status = forms.ChoiceField(choices=Lead.STATUS_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control'}),
-                                label="Статус")
+                               label="Статус")
 
     class Meta:
         model = Lead
-        fields = ['status', 'first_name', 'last_name', 'phone_number', 'comments']
+        fields = ['status', 'first_name',
+                  'last_name', 'phone_number', 'comments']
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data['phone_number']

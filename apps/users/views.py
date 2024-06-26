@@ -21,7 +21,7 @@ from django.core import serializers
 
 from apps.users.models import Lead, User
 from apps.gym.models import GymSession, Subscription
-from apps.users.forms import AttendanceForm, LeadForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
+from apps.users.forms import AttendanceForm, LeadForm, UserCreateForm, UserProfileUpdateForm, UserRegistrationForm, UserUpdateForm
 from apps.users.permissions import gym_manager_required
 from apps.users.tasks import generate_and_save_access
 from project.settings import ERROR_PATTERN
@@ -185,6 +185,7 @@ class UserDetail(LoginRequiredMixin, View):
             'add_subscription_form': add_subscription_form,
             'now': timezone.now(),
             'form': UserUpdateForm(instance=user),
+            'profile_form': UserProfileUpdateForm(instance=user.profile),
             'subscriptions': subscriptions
         }
 
@@ -264,6 +265,18 @@ class UserUpdateView(LoginRequiredMixin, FormView):
             messages.add_message(self.request, messages.WARNING,
                                  "Xatolik")
             return redirect('user-details', form.cleaned_data['user_id'])
+
+
+@method_decorator(gym_manager_required(login_url='login'), name='dispatch')
+class UserProfileUpdateView(LoginRequiredMixin, FormView):
+    login_url = 'login'
+    template_name = 'users/member.html'
+    form_class = UserProfileUpdateForm
+    success_url = 'users'
+
+    def form_valid(self, form):
+        form.save()
+        return redirect('users')
 
 
 def login_view(request):
