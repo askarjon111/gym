@@ -24,8 +24,9 @@
 <section class="content">
     <div class="row">
         <div class="col-md-3">
-            <a href="compose.html" class="btn btn-primary btn-block mb-3">Добавить новое</a>
-  
+            <button href="#" class="btn btn-primary btn-block mb-3" title="Добавить Уведомление" data-toggle="modal"
+                                            data-target="#add-notification">Добавить новое</button>
+
           <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Folders</h3>
@@ -185,8 +186,29 @@
             </div>
             <!-- /.card -->
           </div>
-        <div class="col-6">
-            {% include 'blocks/_pagination.html' %}
+          <div class="modal fade" id="add-notification">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Добавить подписку</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'notifications' %}" method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
         </div>
     </div>
 </section>
