@@ -184,7 +184,7 @@
                                 </form>
                             </div>
                             <div class="tab-pane" id="user-profile">
-                                <form method="POST" action="{% url 'user-profile-update' user.profile.id %}">
+                                <form method="POST" action="{% url 'user-profile-update' user.profile.id %}" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     {{ profile_form.as_p }}
                                     <button method="post" class="btn btn-success float-right" type="submit">Сохранять</button>

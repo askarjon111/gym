@@ -19,7 +19,7 @@ from apps.controls.models import Gym
 from apps.gym.forms import AddSubscriptionForm
 from django.core import serializers
 
-from apps.users.models import Lead, User
+from apps.users.models import Lead, User, UserProfile
 from apps.gym.models import GymSession, Subscription
 from apps.users.forms import AttendanceForm, LeadForm, UserCreateForm, UserProfileUpdateForm, UserRegistrationForm, UserUpdateForm
 from apps.users.permissions import gym_manager_required
@@ -274,9 +274,14 @@ class UserProfileUpdateView(LoginRequiredMixin, FormView):
     form_class = UserProfileUpdateForm
     success_url = 'users'
 
-    def form_valid(self, form):
-        form.save()
-        return redirect('users')
+    def post(self, request, *args, **kwargs):
+        profile = UserProfile.objects.filter(id=kwargs['pk']).last()
+        form = UserProfileUpdateForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user-details', profile.user.id)
+        else:
+            print(form.errors)
 
 
 def login_view(request):
