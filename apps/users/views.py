@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -163,33 +164,37 @@ class UserDetail(LoginRequiredMixin, View):
     login_url = 'login'
 
     def get(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        attended_sessions = []
-        list_count = 0
-        gym = self.request.user.gym
-        subscriptions = Subscription.objects.filter(member=user, plan__gym=gym)
-        last_subscription = subscriptions.last()
+        try:
+            user:User = get_object_or_404(User, pk=pk)
+            attended_sessions = []
+            list_count = 0
+            gym = self.request.user.gym
+            subscriptions = Subscription.objects.filter(member=user, plan__gym=gym)
+            last_subscription = subscriptions.last()
 
-        if last_subscription:
-            attended_sessions = GymSession.objects.filter(
-                member=user, subscription=last_subscription)
-            list_count = last_subscription.plan.sessions - attended_sessions.count()
-            list_count = 0 if list_count < 0 else list_count
+            if last_subscription:
+                attended_sessions = GymSession.objects.filter(
+                    member=user, subscription=last_subscription)
+                list_count = last_subscription.plan.sessions - attended_sessions.count()
+                list_count = 0 if list_count < 0 else list_count
 
-        add_subscription_form = AddSubscriptionForm(request=self.request)
+            add_subscription_form = AddSubscriptionForm(request=self.request)
 
-        context = {
-            'user': user,
-            'attended_sessions': attended_sessions,
-            'list_count': list_count,
-            'add_subscription_form': add_subscription_form,
-            'now': timezone.now(),
-            'form': UserUpdateForm(instance=user),
-            'profile_form': UserProfileUpdateForm(instance=user.profile),
-            'subscriptions': subscriptions
-        }
+            context = {
+                'user': user,
+                'attended_sessions': attended_sessions,
+                'list_count': list_count,
+                'add_subscription_form': add_subscription_form,
+                'now': timezone.now(),
+                'form': UserUpdateForm(instance=user),
+                'profile_form': UserProfileUpdateForm(instance=user.profile),
+                'subscriptions': subscriptions
+            }
 
-        return render(request, 'users/member.html', context)
+            return render(request, 'users/member.html', context)
+        except ObjectDoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+            return redirect('user-details', user.id)
 
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
