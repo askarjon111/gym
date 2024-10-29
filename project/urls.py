@@ -12,7 +12,8 @@ urlpatterns = [
     # admin
     path('admin/', admin.site.urls),
     path('users/', include('apps.users.urls')),
-    path('dashboard/', include('apps.gym.urls')),
+    path('gym/', include('apps.gym.urls')),
+    path('home/', include('apps.common.urls')),
     path('notifications/', include('apps.notifications.urls')),
     path('', include('apps.websites.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
