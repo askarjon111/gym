@@ -5,13 +5,17 @@ from django.utils import timezone
 from celery import shared_task
 from django.core.files import File
 
+from apps.controls.models import Gym
 from apps.users.models import Access, User
 
 
 @shared_task()
-def generate_and_save_access(user_id):
+def generate_and_save_access(user_id, gym_id):
     user = User.objects.get(id=user_id)
-    gym_code = user.gym.code if user.gym else "NN"
+    gym = Gym.objects.filter(id=gym_id).last()
+    if not gym:
+        gym = user.gym
+    gym_code = gym.code or "NN"
     code = gym_code + str(random.randint(10000, 99999))
     qr = qrcode.QRCode(
         version=1,
@@ -31,3 +35,4 @@ def generate_and_save_access(user_id):
         code=code, gym=user.gym, user=user, image=File(open(qr_code_name, 'rb')))
     access.save()
     os.remove(qr_code_name)
+    return access

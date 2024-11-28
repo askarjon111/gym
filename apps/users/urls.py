@@ -4,6 +4,7 @@ from apps.users.views import (CreateUser, MembersListView, UserDetail, UserProfi
                               UserUpdateView, StaffListView, UserDelete,
                               is_user_registered, register_new_user, my_subscription, 
                               my_sessions)
+from apps.users.viewss.access.views import AccessByUserView
 
 
 urlpatterns = [
@@ -30,4 +31,7 @@ urlpatterns = [
     path('leads/activate/',activate_lead,name='activate-lead'),
     path('leads/canceled/',canceled_lead,name='canceled_lead'),
     path('leads/<int:pk>/delete/', lead_delete, name='lead_delete'),
+
+    # Access
+    path('access/<int:user_id>/', AccessByUserView.as_view(), name='access-by-user'),
 ]
