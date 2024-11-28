@@ -138,7 +138,7 @@ class Access(BaseModel):
     code = models.CharField(max_length=7, unique=True)
     image = models.ImageField(upload_to=upload_path)
     gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, null=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='access')
     is_printed = models.BooleanField(default=False)
 
     def __str__(self):
