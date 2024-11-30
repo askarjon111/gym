@@ -58,7 +58,7 @@
                                 <td>{% if member.subscription %}{{ member.subscription.get_status_display }}{% else %}Нет{% endif %}</td>
                                 <td>
                                     <button href="#" class="btn btn-primary btn-sm" title="Добавить подписку" data-toggle="modal"
-                                            data-target="#modal-default-{{ member.id }}"><i class="fas fa-plus"></i></button>
+                                            data-target="#modal-subscription-{{ member.id }}"><i class="fas fa-plus"></i></button>
                                     <form class="btn btn-sm" method="post" action="{% url 'users' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="member" value="{{ member.id }}">
@@ -70,7 +70,7 @@
                                     
                                 </td>
                             </tr>
-                            <div class="modal fade" id="modal-default-{{ member.id }}">
+                            <div class="modal fade" id="modal-subscription-{{ member.id }}">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
