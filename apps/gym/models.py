@@ -23,7 +23,7 @@ class Plan(BaseModel):
 
 
 class Subscription(BaseModel):
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])

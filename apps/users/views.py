@@ -67,19 +67,24 @@ class MembersListView(LoginRequiredMixin, View):
     paginate_by = 20
     login_url = 'login'
 
-    def get(self, request, *args, **kwargs):
+
+    def get_queryset(self):
         query = self.request.GET.get('q')
         gym = self.request.user.gym
         if gym:
-            users = Gym.objects.get_members(gym.id).order_by('-id')
-        now = timezone.now()
-
+            users = gym.users.filter(gyms=gym).prefetch_related('subscriptions', 'gyms').only('phone_number', 'subscriptions')
         if query:
             users = users.filter(
                 Q(phone_number__icontains=query) |
                 Q(first_name__icontains=query) |
                 Q(last_name__icontains=query)
             )
+        return users
+    
+
+    def get(self, request, *args, **kwargs):
+        now = timezone.now()
+        users = self.get_queryset()
         paginator = Paginator(users, self.paginate_by)
         page = self.request.GET.get('page')
 
