@@ -36,7 +36,7 @@ class Subscription(BaseModel):
         ]
 
     def save(self, *args, **kwargs):
-        active_subscriptions = self.member.subscription_set.filter(
+        active_subscriptions = self.member.subscriptions.filter(
             status=STATUS_CHOICES[0][0])
         if active_subscriptions.count():
             active_subscriptions.update(status=STATUS_CHOICES[1][0])

@@ -4,11 +4,17 @@ from pathlib import Path
 from datetime import timedelta
 import re
 from dotenv import load_dotenv
-load_dotenv()
+
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+if os.getenv("IS_DOCKER") == "1":
+    docker_env_path = BASE_DIR / ".docker.env"
+    load_dotenv(docker_env_path)
+else:
+    local_env_path = BASE_DIR / ".env"
+    load_dotenv(local_env_path)
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
@@ -16,6 +22,13 @@ DEBUG = os.environ.get('DEBUG') == "1"
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.gymbro.uz',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'https://127.0.0.1:8000',
+    'https://localhost:8000'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -121,9 +134,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Asia/Tashkent'
-CELERY_BROKER_URL = "redis://127.0.0.1:6379"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379"
 
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', "redis://redis:6379/1")
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', "redis://redis:6379/1")
 
 USE_I18N = True
 
