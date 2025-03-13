@@ -64,7 +64,6 @@ class AddNewPlanForm(forms.ModelForm):
         super(AddNewPlanForm, self).__init__(*args, **kwargs)
         self.fields['gym'].widget = forms.HiddenInput()
 
-
     def save(self, commit=True, **kwargs):
         instance = super(AddNewPlanForm, self).save(commit=False)
         if not instance.pk:
@@ -86,13 +85,11 @@ class AddNewGymEquipmentForm(forms.ModelForm):
         model = GymEquipment
         fields = ['gym', 'name', 'description', 'image']
 
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         self.gym = kwargs.pop('gym', None)
         super().__init__(*args, **kwargs)
         self.fields['gym'].widget = forms.HiddenInput()
-
 
     def save(self, commit=True, **kwargs):
         instance = super(AddNewGymEquipmentForm, self).save(commit=False)

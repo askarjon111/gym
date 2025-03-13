@@ -1,7 +1,6 @@
 from django import forms
 
 from apps.controls.models import Gym
-from apps.users.models import User
 from .models import Notification
 
 

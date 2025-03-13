@@ -1,12 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import random
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from apps.common.choices import STATUS_CHOICES
 
 from apps.controls.models import Gym, GymPlan
-from apps.gym.models import Plan, Subscription, GymSession
-from apps.users.models import User, GymRole, UserProfile
+from apps.gym.models import Plan, Subscription
+from apps.users.models import User, UserProfile
 
 
 class Command(BaseCommand):
@@ -129,17 +129,16 @@ class Command(BaseCommand):
                     chest=random.uniform(70, 120),
                     guts=random.uniform(60, 100),
                     gender=random.choice(['male', 'female']),
-                    date_of_birth=timezone.now().date() - timedelta(days=random.randint(365*20, 365*40)),
+                    date_of_birth=timezone.now().date() - timedelta(days=random.randint(365 * 20, 365 * 40)),
                     user_type='Member'
                 )
                 today = timezone.now()
-                thirty_days_ago = today - timedelta(days=30)
                 start_date = today - timedelta(days=30)
                 Subscription.objects.create(
                     member=user,
                     plan=random.choice(plans),
                     status=STATUS_CHOICES[0][0],
                     start_date=start_date,
-                    end_date=start_date+timedelta(days=30)
+                    end_date=start_date + timedelta(days=30)
                 )
         return 'Users created.'

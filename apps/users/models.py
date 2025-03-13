@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.contrib import messages
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
 from apps.common.choices import STATUS_CHOICES
@@ -38,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         indexes = [
             models.Index(fields=['phone_number'])
         ]
+        ordering = ['-id']
 
     def save(self, *args, **kwargs):
         self.phone_number = self.phone_number.replace(" ", "")
@@ -166,4 +166,3 @@ class Lead(BaseModel):
     @property
     def fullname(self):
         return f"{self.first_name} {self.last_name}"
-
