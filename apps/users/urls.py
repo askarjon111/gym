@@ -1,14 +1,14 @@
 from django.urls import path
-from apps.users.viewss.access.views import AccessByUserView
-from apps.users.viewss import (CreateUserView, UserRegistrationView, login_view,
+from apps.users.views.access.views import AccessByUserView
+from apps.users.views import (CreateUserView, UserRegistrationView, login_view,
                                LogOutView, StaffListView, MembersListView,
                                UserDetail, UserUpdateView, UserDelete,
                                register_user_view, is_registered_view)
-from apps.users.viewss.user_profile import UserProfileUpdateView
-from apps.users.viewss.lead import (activate_lead_view, lead_delete_view, leads_view,
+from apps.users.views.user_profile import UserProfileUpdateView
+from apps.users.views.lead import (activate_lead_view, lead_delete_view, leads_view,
                                     lead_edit_view, leads_view, cancel_lead_view)
-from apps.users.viewss.sessions import my_sessions_view
-from apps.users.viewss.subscription import my_subscription_view
+from apps.users.views.sessions import my_sessions_view
+from apps.users.views.subscription import my_subscription_view
 
 
 urlpatterns = [
