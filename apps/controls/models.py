@@ -33,20 +33,20 @@ class Gym(BaseModel):
     def members(self):
         """Returns all members of the gym"""
         from apps.users.models import User
-        return User.objects.filter(subscription__plan__gym_id=self.id)
+        return User.objects.filter(subscriptions__plan__gym_id=self.id)
 
     @property
     def active_members(self):
         """Returns active members of the gym"""
         activity_start = timezone.now() - timedelta(days=3)
-        return self.members.filter(subscription__plan__gym_id=self.id,
+        return self.members.filter(subscriptions__plan__gym_id=self.id,
                                    gymsession__start__gte=activity_start).distinct()
 
     @property
     def new_members(self):
         """Returns new members of the gym"""
         registered = timezone.now() - timedelta(days=3)
-        return self.members.filter(subscription__plan__gym_id=self.id,
+        return self.members.filter(subscriptions__plan__gym_id=self.id,
                                    created_at__gte=registered)
 
     @property
@@ -90,4 +90,3 @@ class GymNotification(BaseModel):
 
     def __str__(self):
         return self.title
-    

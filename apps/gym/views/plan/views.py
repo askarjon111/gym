@@ -11,6 +11,7 @@ from apps.gym.models import Plan
 from apps.users.permissions import gym_manager_required
 from project.settings import ERROR_PATTERN
 
+
 @method_decorator(gym_manager_required(login_url='login'), name='dispatch')
 class PlansView(View):
     template_name = 'gym/plans.html'
@@ -71,7 +72,6 @@ class ArchivePlanView(View):
         plan.is_active = False
         plan.save()
         return redirect('plans')
-
 
 
 @gym_manager_required(login_url='login')

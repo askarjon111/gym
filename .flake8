@@ -1,0 +1,3 @@
+[flake8]
+exclude=settings.py, urls.py, *migrations/, .venv, .env, env, venv
+ignore =E501

@@ -27,7 +27,6 @@ class AddSubscriptionView(View):
             print(form.errors)
         return redirect('user-details', form.data['member'])
 
-
     def get(self, request, pk):
         user = User.objects.get(id=pk)
         return render(request, 'users/add_subscription.html',

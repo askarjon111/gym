@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    env_file: .env
+    env_file: .docker.env
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
@@ -13,10 +13,12 @@ services:
       - "8001:8001"
     depends_on:
       - postgres
+    environment:
+      - IS_DOCKER=1
 
   postgres:
     image: postgres:15-alpine
-    env_file: .env
+    env_file: .docker.env
     restart: always
     environment:
       POSTGRES_LOGGING_COLLECTOR: "true"
@@ -27,7 +29,7 @@ services:
   redis:
     image: redis:6.2-alpine
     env_file:
-      - .env
+      - .docker.env
     volumes:
       - redis_data:/data
 

@@ -23,7 +23,7 @@ class Plan(BaseModel):
 
 
 class Subscription(BaseModel):
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=15, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0])
@@ -36,7 +36,7 @@ class Subscription(BaseModel):
         ]
 
     def save(self, *args, **kwargs):
-        active_subscriptions = self.member.subscription_set.filter(
+        active_subscriptions = self.member.subscriptions.filter(
             status=STATUS_CHOICES[0][0])
         if active_subscriptions.count():
             active_subscriptions.update(status=STATUS_CHOICES[1][0])

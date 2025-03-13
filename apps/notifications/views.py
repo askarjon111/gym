@@ -1,29 +1,12 @@
-
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect, render
 from django.views import View
-from django.utils import timezone
-from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, FormView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from apps.common.choices import STATUS_CHOICES
-from apps.controls.models import Gym
-from apps.gym.forms import AddSubscriptionForm
-from django.core import serializers
 
 from apps.notifications.forms import NotificationForm
 from apps.notifications.models import Notification
-from apps.users.models import User
-from apps.gym.models import GymSession, Plan, Subscription
-from apps.users.forms import AttendanceForm, UserCreateForm, UserRegistrationForm, UserUpdateForm
 from apps.users.permissions import gym_manager_required
 
 
@@ -42,9 +25,7 @@ class NotificationsListView(LoginRequiredMixin, View):
 
         if query:
             notifications = notifications.filter(
-                Q(title__icontains=query) |
-                Q(body__icontains=query) |
-                Q(receiver__phone_number__icontains=query)
+                Q(title__icontains=query) | Q(body__icontains=query) | Q(receiver__phone_number__icontains=query)
             )
         paginator = Paginator(notifications, self.paginate_by)
         page = self.request.GET.get('page')
@@ -77,7 +58,6 @@ class NotificationDetailView(LoginRequiredMixin, View):
     template_name = 'notifications/single_notification.html'
     login_url = 'login'
 
-
     def get(self, request, pk, *args, **kwargs):
         gym = self.request.user.gym
         if gym:
@@ -85,7 +65,6 @@ class NotificationDetailView(LoginRequiredMixin, View):
 
         form = NotificationForm(request.POST, request=request, instance=notification)
         return render(request, self.template_name, {'notification': notification, 'form': form})
-
 
     def post(self, request, *args, **kwargs):
         form = NotificationForm(request.POST, request=request)
@@ -99,4 +78,3 @@ class NotificationDetailView(LoginRequiredMixin, View):
             notifications = Notification.objects.filter(gym=request.user.gym)
             context = {'objects': notifications, 'form': form}
             return render(request, self.template_name, context)
-
