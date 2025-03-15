@@ -4,6 +4,7 @@ from .views.statistics import statistics
 from .views.plan import UpdatePlanView, PlansView, AddNewPlanView, ArchivePlanView, get_plan_days
 from .views.subscription import AddSubscriptionView,  cancel_subscription
 from .views.equipment import AddNewGymEquipmentView, EquipmentView, remove_equipment
+from apps.gym.views import scan_qr, process_qr
 
 
 urlpatterns = [
@@ -25,4 +26,6 @@ urlpatterns = [
     path('plans/<int:pk>/update/', UpdatePlanView.as_view(), name='update-plan'),
 
     path('statistics/', statistics, name="statistics"),
+    path('scan/', scan_qr, name='scan_qr'),
+    path('process_qr/', process_qr, name='process_qr'),
 ]

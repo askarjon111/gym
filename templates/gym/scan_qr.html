@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode@latest"></script>
+    <style>
+        #qr-reader { width: 300px; }
+    </style>
+</head>
+<body>
+    <h2>Scan a QR Code</h2>
+    <div id="qr-reader"></div>
+    <p id="qr-result">Waiting for scan...</p>
+
+    <script>
+        
+        function onScanSuccess(qrCodeMessage) {
+            document.getElementById("qr-result").innerText = "QR Code: " + qrCodeMessage;
+
+            // Send QR data to Django backend
+            fetch('/process_qr/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: 'qr_data=' + encodeURIComponent(qrCodeMessage)
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error("Error:", error));
+        }
+
+        function getCSRFToken() {
+            return document.cookie.split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+        }
+
+        console.log("Initializing QR Scanner...");
+        const html5QrCode = new Html5Qrcode("qr-reader");
+        html5QrCode.start(
+            { facingMode: "user" }, // Change to "environment" for rear camera on mobile
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => console.log("Scanned QR Code:", decodedText)
+        ).catch(err => console.error("Camera error:", err));
+
+        console.log("QR Reader Element:", document.getElementById("qr-reader"));
+
+
+    </script>
+</body>
+</html>
