@@ -1,52 +1,18 @@
-document.getElementById('id_plan').addEventListener('change', function () {
-    var planId = document.getElementById('id_plan').value;
-    if (planId) {
-        updateEndDate(planId);
-    }
-});
+document.addEventListener("DOMContentLoaded", function () {
+    const cancelButtonList = document.querySelectorAll('.cancel-subscription');
 
-function updateEndDate(planId) {
-    const baseUrl = window.location.host;
-    var apiUrl = 'http://' + baseUrl + `/gym/plans/${planId}/days/`
-    if (!baseUrl.includes('127.0.0.1')) {
-        apiUrl = 'https://' + baseUrl + `/gym/plans/${planId}/days/`
-    }
+    cancelButtonList.forEach(function (cancelButton) {
+        cancelButton.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    const options = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
+            if (this.classList.contains('disabled')) return; // Prevent multiple clicks
 
-    fetch(apiUrl, options)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; // Show loading spinner
 
-            if (data.days !== null) {
-                var startDate = new Date(document.getElementById('id_start_date').value);
-                var endDate = new Date(startDate.getTime() + data.days * 24 * 60 * 60 * 1000);
-                var endDateFormat = endDate.getFullYear() + '-' + (endDate.getMonth() + 1).toString().padStart(2, '0') + '-' + endDate.getDate().toString().padStart(2, '0');
-                document.getElementById('id_end_date').value = endDateFormat;
-            }
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+            const buttonValue = this.value;
+            cancelSubscription(buttonValue, this);
         });
-}
-const cancelButtonList = document.querySelectorAll('.cancel-subscription');
-
-cancelButtonList.forEach(function (cancelButton) {
-    cancelButton.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        const buttonValue = this.value
-        cancelSubscription(buttonValue);
     });
 });
 
@@ -66,14 +32,14 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function cancelSubscription(subId) {
+function cancelSubscription(subId, button) {
     const csrftoken = getCookie('csrftoken');
 
     const baseUrl = window.location.host;
-    const url = '/gym/subscriptions/' + subId + '/cancel/'
-    var apiUrl = 'http://' + baseUrl + url;
+    const url = `/gym/subscriptions/${subId}/cancel/`;
+    var apiUrl = `http://${baseUrl}${url}`;
     if (!baseUrl.includes('127.0.0.1')) {
-        apiUrl = 'https://' + baseUrl + url;
+        apiUrl = `https://${baseUrl}${url}`;
     }
 
     const options = {
@@ -89,8 +55,16 @@ function cancelSubscription(subId) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
+            return response.json();
+        })
+        .then(data => {
+            // Successfully canceled subscription
+            button.innerHTML = '<i class="fas fa-cancel"></i>'; // Show success icon
+            button.classList.add('disabled'); // Disable button permanently
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
+            button.disabled = false;  // Re-enable button if request fails
+            button.innerHTML = '<i class="fas fa-cancel"></i>'; // Restore icon
         });
 }
